@@ -1,0 +1,48 @@
+{
+  "name": "sasori",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "dotenv": "^17.2.2",
+      "zod": "^4.1.13",
+      "typescript": "^5",
+      "@types/bun": "^1.3.4",
+      "@libsql/client": "0.15.15",
+      "libsql": "0.5.22"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:native": "turbo -F native dev",
+    "dev:web": "turbo -F web dev",
+    "dev:server": "turbo -F server dev",
+    "db:push": "turbo -F @sasori/db db:push",
+    "db:studio": "turbo -F @sasori/db db:studio",
+    "db:generate": "turbo -F @sasori/db db:generate",
+    "db:migrate": "turbo -F @sasori/db db:migrate",
+    "db:local": "turbo -F @sasori/db db:local",
+    "check": "oxlint && oxfmt --write",
+    "ruler:apply": "bunx @intellectronica/ruler@latest apply --local-only"
+  },
+  "dependencies": {
+    "@sasori/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@sasori/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "oxfmt": "^0.26.0",
+    "oxlint": "^1.41.0",
+    "turbo": "^2.6.3",
+    "typescript": "catalog:"
+  },
+  "packageManager": "bun@1.3.9"
+}

@@ -1,0 +1,3 @@
+{
+  "extends": "@sasori/config/tsconfig.base.json"
+}
