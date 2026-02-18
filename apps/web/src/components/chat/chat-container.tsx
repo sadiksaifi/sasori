@@ -22,6 +22,12 @@ export function ChatContainer({ chatId }: { chatId: string }) {
   const isFirstMessageRef = useRef(true);
   const hasNotifiedStreamingRef = useRef(false);
 
+  // Typewriter reveal refs
+  const serverTextRef = useRef("");
+  const revealedIndexRef = useRef(0);
+  const serverDoneRef = useRef(false);
+  const revealTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
   // Use refs to avoid adding dependencies to handleMessage
   const addStreamingChatRef = useRef(addStreamingChat);
   const removeStreamingChatRef = useRef(removeStreamingChat);
@@ -32,6 +38,72 @@ export function ChatContainer({ chatId }: { chatId: string }) {
     chatIdRef.current = chatId;
   }, [addStreamingChat, removeStreamingChat, chatId]);
 
+  // Start the reveal interval if not already running
+  function startReveal() {
+    if (revealTimerRef.current) return;
+    revealTimerRef.current = setInterval(() => {
+      const target = serverTextRef.current;
+      const revealed = revealedIndexRef.current;
+
+      if (revealed >= target.length) {
+        if (serverDoneRef.current) {
+          clearInterval(revealTimerRef.current);
+          revealTimerRef.current = undefined;
+          setIsStreaming(false);
+          hasNotifiedStreamingRef.current = false;
+          removeStreamingChatRef.current(chatIdRef.current);
+          serverTextRef.current = "";
+          revealedIndexRef.current = 0;
+          serverDoneRef.current = false;
+        }
+        return;
+      }
+
+      const remaining = target.length - revealed;
+      const chars = Math.max(2, Math.ceil(remaining / 60));
+      revealedIndexRef.current = Math.min(revealed + chars, target.length);
+      const text = target.slice(0, revealedIndexRef.current);
+
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant") {
+          return [...prev.slice(0, -1), { ...last, content: text }];
+        }
+        return [...prev, { role: "assistant", content: text }];
+      });
+    }, 16);
+  }
+
+  // Stop the reveal interval, optionally flushing remaining text
+  function stopReveal(flush: boolean) {
+    if (revealTimerRef.current) {
+      clearInterval(revealTimerRef.current);
+      revealTimerRef.current = undefined;
+    }
+    if (flush && revealedIndexRef.current < serverTextRef.current.length) {
+      const text = serverTextRef.current;
+      revealedIndexRef.current = text.length;
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant") {
+          return [...prev.slice(0, -1), { ...last, content: text }];
+        }
+        return [...prev, { role: "assistant", content: text }];
+      });
+    }
+    serverTextRef.current = "";
+    revealedIndexRef.current = 0;
+    serverDoneRef.current = false;
+  }
+
+  // Refs so handleMessage (with [] deps) can access latest helpers
+  const startRevealRef = useRef(startReveal);
+  const stopRevealRef = useRef(stopReveal);
+  useEffect(() => {
+    startRevealRef.current = startReveal;
+    stopRevealRef.current = stopReveal;
+  });
+
   // Reset state when chatId changes
   useEffect(() => {
     setMessages([]);
@@ -39,6 +111,13 @@ export function ChatContainer({ chatId }: { chatId: string }) {
     setIsLoadingHistory(true);
     isFirstMessageRef.current = true;
     hasNotifiedStreamingRef.current = false;
+    if (revealTimerRef.current) {
+      clearInterval(revealTimerRef.current);
+      revealTimerRef.current = undefined;
+    }
+    serverTextRef.current = "";
+    revealedIndexRef.current = 0;
+    serverDoneRef.current = false;
   }, [chatId]);
 
   const handleMessage = useCallback((data: string) => {
@@ -62,10 +141,8 @@ export function ChatContainer({ chatId }: { chatId: string }) {
         break;
 
       case "stream_resume":
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: parsed.accumulatedText },
-        ]);
+        serverTextRef.current += parsed.accumulatedText;
+        startRevealRef.current();
         setIsStreaming(true);
         if (!hasNotifiedStreamingRef.current) {
           hasNotifiedStreamingRef.current = true;
@@ -82,16 +159,8 @@ export function ChatContainer({ chatId }: { chatId: string }) {
         break;
 
       case "text_delta":
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.role === "assistant") {
-            return [
-              ...prev.slice(0, -1),
-              { ...last, content: last.content + parsed.text },
-            ];
-          }
-          return [...prev, { role: "assistant", content: parsed.text }];
-        });
+        serverTextRef.current += parsed.text;
+        startRevealRef.current();
         setIsStreaming(true);
         if (!hasNotifiedStreamingRef.current) {
           hasNotifiedStreamingRef.current = true;
@@ -100,20 +169,15 @@ export function ChatContainer({ chatId }: { chatId: string }) {
         break;
 
       case "done":
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.role === "assistant") return prev;
-          if (parsed.result) {
-            return [...prev, { role: "assistant", content: parsed.result }];
-          }
-          return prev;
-        });
-        setIsStreaming(false);
-        hasNotifiedStreamingRef.current = false;
-        removeStreamingChatRef.current(chatIdRef.current);
+        if (serverTextRef.current.length === 0 && parsed.result) {
+          serverTextRef.current = parsed.result;
+          startRevealRef.current();
+        }
+        serverDoneRef.current = true;
         break;
 
       case "error":
+        stopRevealRef.current(true);
         toast.error(parsed.message || "Something went wrong");
         setIsStreaming(false);
         hasNotifiedStreamingRef.current = false;
@@ -121,6 +185,7 @@ export function ChatContainer({ chatId }: { chatId: string }) {
         break;
 
       case "cancelled":
+        stopRevealRef.current(true);
         setIsStreaming(false);
         hasNotifiedStreamingRef.current = false;
         removeStreamingChatRef.current(chatIdRef.current);
