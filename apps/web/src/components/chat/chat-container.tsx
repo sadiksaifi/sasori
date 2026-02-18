@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { env } from "@sasori/env/web";
 import { useWebSocket } from "@/hooks/use-web-socket";
+import { useChatsContext } from "@/contexts/chats-context";
 import { ChatInput } from "./chat-input";
 import { MessageList } from "./message-list";
 
@@ -10,11 +11,22 @@ interface Message {
   content: string;
 }
 
-const WS_URL = env.VITE_SERVER_URL.replace(/^http/, "ws") + "/ws";
+const WS_BASE = env.VITE_SERVER_URL.replace(/^http/, "ws");
 
-export function ChatContainer() {
+export function ChatContainer({ chatId }: { chatId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const { updateChatTitle } = useChatsContext();
+  const isFirstMessageRef = useRef(true);
+
+  // Reset state when chatId changes
+  useEffect(() => {
+    setMessages([]);
+    setIsStreaming(false);
+    setIsLoadingHistory(true);
+    isFirstMessageRef.current = true;
+  }, [chatId]);
 
   const handleMessage = useCallback((data: string) => {
     let parsed: any;
@@ -25,6 +37,17 @@ export function ChatContainer() {
     }
 
     switch (parsed.type) {
+      case "history":
+        setMessages(
+          parsed.messages.map((m: any) => ({
+            role: m.role,
+            content: m.content,
+          })),
+        );
+        isFirstMessageRef.current = parsed.messages.length === 0;
+        setIsLoadingHistory(false);
+        break;
+
       case "text_delta":
         setMessages((prev) => {
           const last = prev[prev.length - 1];
@@ -42,9 +65,7 @@ export function ChatContainer() {
       case "done":
         setMessages((prev) => {
           const last = prev[prev.length - 1];
-          // If deltas already built the assistant message, keep it
           if (last?.role === "assistant") return prev;
-          // No deltas came through — use the final result
           if (parsed.result) {
             return [...prev, { role: "assistant", content: parsed.result }];
           }
@@ -64,21 +85,27 @@ export function ChatContainer() {
     }
   }, []);
 
+  const wsUrl = `${WS_BASE}/ws?chatId=${chatId}`;
   const { status, send } = useWebSocket({
-    url: WS_URL,
+    url: wsUrl,
     onMessage: handleMessage,
   });
 
   const handleSend = useCallback(
     (text: string) => {
+      // Update title from first user message
+      if (isFirstMessageRef.current) {
+        isFirstMessageRef.current = false;
+        updateChatTitle(chatId, text.slice(0, 50));
+      }
+
       setMessages((prev) => [...prev, { role: "user", content: text }]);
       setIsStreaming(true);
       send(JSON.stringify({ type: "prompt", text }));
     },
-    [send],
+    [send, chatId, updateChatTitle],
   );
 
-  // Show waiting indicator when streaming but no assistant message started yet
   const lastMsg = messages[messages.length - 1];
   const isWaiting = isStreaming && lastMsg?.role !== "assistant";
 
@@ -89,7 +116,11 @@ export function ChatContainer() {
           Disconnected — reconnecting...
         </div>
       )}
-      <MessageList messages={messages} isWaiting={isWaiting} />
+      <MessageList
+        messages={messages}
+        isWaiting={isWaiting}
+        isLoadingHistory={isLoadingHistory}
+      />
       <div className="input-top-gradient absolute bottom-[calc(theme(spacing.6)*2+3rem)] left-0 right-0 h-8 pointer-events-none z-10" />
       <ChatInput onSend={handleSend} disabled={status !== "connected"} />
     </div>

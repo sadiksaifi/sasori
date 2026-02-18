@@ -1,22 +1,20 @@
 import { resolve } from "node:path";
-import type { ServerWebSocket } from "bun";
 import { parseStreamLine } from "./parser";
 import { buildCliArgs, DEFAULT_CONFIG } from "./config";
 import type { ServerMessage } from "../ws/protocol";
 
 const PROJECT_ROOT = resolve(import.meta.dir, "../../../..");
 
-function send(ws: ServerWebSocket<any>, msg: ServerMessage) {
-  ws.send(JSON.stringify(msg));
-}
-
 export async function spawnClaude(
-  ws: ServerWebSocket<any>,
+  broadcast: (msg: ServerMessage) => void,
   prompt: string,
   signal: AbortSignal,
+  onDelta?: (text: string) => void,
 ) {
-  const preview = prompt.length > 80 ? prompt.slice(0, 80) + "…" : prompt;
-  console.log(`[claude] Prompt received (${prompt.length} chars): "${preview}"`);
+  const preview = prompt.length > 80 ? prompt.slice(0, 80) + "..." : prompt;
+  console.log(
+    `[claude] Prompt received (${prompt.length} chars): "${preview}"`,
+  );
 
   const args = buildCliArgs(prompt, DEFAULT_CONFIG);
 
@@ -37,7 +35,7 @@ export async function spawnClaude(
   };
   signal.addEventListener("abort", onAbort, { once: true });
 
-  // Read stderr in background, accumulate for error reporting
+  // Read stderr in background
   let stderrText = "";
   const stderrReader = (async () => {
     if (!proc.stderr) return;
@@ -58,7 +56,7 @@ export async function spawnClaude(
 
   // Stream stdout line by line
   if (!proc.stdout) {
-    send(ws, { type: "error", message: "Failed to capture stdout" });
+    broadcast({ type: "error", message: "Failed to capture stdout" });
     return;
   }
 
@@ -75,13 +73,15 @@ export async function spawnClaude(
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
-      // Keep the last incomplete line in the buffer
       buffer = lines.pop() ?? "";
 
       for (const line of lines) {
         const msg = parseStreamLine(line);
         if (msg) {
-          send(ws, msg);
+          if (msg.type === "text_delta" && onDelta) {
+            onDelta(msg.text);
+          }
+          broadcast(msg);
         }
       }
     }
@@ -90,12 +90,15 @@ export async function spawnClaude(
     if (buffer.trim()) {
       const msg = parseStreamLine(buffer);
       if (msg) {
-        send(ws, msg);
+        if (msg.type === "text_delta" && onDelta) {
+          onDelta(msg.text);
+        }
+        broadcast(msg);
       }
     }
   } catch (err) {
     if (!signal.aborted) {
-      send(ws, {
+      broadcast({
         type: "error",
         message: err instanceof Error ? err.message : "Stream read error",
       });
@@ -108,9 +111,10 @@ export async function spawnClaude(
     console.log(`[claude] Process exited (code: ${exitCode})`);
 
     if (exitCode !== 0 && !signal.aborted) {
-      const errMsg = stderrText.trim() || `Process exited with code ${exitCode}`;
+      const errMsg =
+        stderrText.trim() || `Process exited with code ${exitCode}`;
       console.error(`[claude] Error:\n${errMsg}`);
-      send(ws, { type: "error", message: errMsg });
+      broadcast({ type: "error", message: errMsg });
     }
   }
 }

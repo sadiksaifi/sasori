@@ -12,6 +12,7 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.45",
     "@sasori/db": "workspace:*",
+    "drizzle-orm": "^0.45.1",
     "@sasori/env": "workspace:*",
     "dotenv": "catalog:",
     "hono": "^4.8.2",

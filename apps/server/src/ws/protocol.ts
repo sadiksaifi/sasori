@@ -8,4 +8,13 @@ export type ServerMessage =
   | { type: "tool_result"; tool: string; output: string }
   | { type: "done"; result: string }
   | { type: "error"; message: string }
-  | { type: "cancelled" };
+  | { type: "cancelled" }
+  | {
+      type: "history";
+      messages: Array<{
+        id: string;
+        role: string;
+        content: string;
+        createdAt: number;
+      }>;
+    };

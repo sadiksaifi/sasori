@@ -10,9 +10,10 @@ interface Message {
 interface MessageListProps {
   messages: Message[];
   isWaiting: boolean;
+  isLoadingHistory?: boolean;
 }
 
-export function MessageList({ messages, isWaiting }: MessageListProps) {
+export function MessageList({ messages, isWaiting, isLoadingHistory }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
@@ -31,7 +32,7 @@ export function MessageList({ messages, isWaiting }: MessageListProps) {
     }
   }, [messages, isWaiting]);
 
-  const isEmpty = messages.length === 0 && !isWaiting;
+  const isEmpty = messages.length === 0 && !isWaiting && !isLoadingHistory;
 
   return (
     <div
