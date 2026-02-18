@@ -35,9 +35,10 @@ export function handleOpen(ws: ServerWebSocket<WsData>) {
   // Subscribe to active session if one exists
   const session = sessionManager.subscribe(chatId, ws);
   if (session) {
-    // Replay accumulated messages so far
-    for (const msg of session.accumulatedMessages) {
-      ws.send(JSON.stringify(msg));
+    if (session.accumulatedText) {
+      ws.send(JSON.stringify({ type: "stream_resume", accumulatedText: session.accumulatedText }));
+    } else {
+      ws.send(JSON.stringify({ type: "stream_active" }));
     }
   }
 }

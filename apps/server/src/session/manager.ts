@@ -99,6 +99,10 @@ class SessionManager {
   getSession(chatId: string): ActiveSession | null {
     return this.sessions.get(chatId) ?? null;
   }
+
+  getActiveSessionIds(): string[] {
+    return Array.from(this.sessions.keys());
+  }
 }
 
 export const sessionManager = new SessionManager();

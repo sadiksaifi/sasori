@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { MessageSquarePlus, Trash2 } from "lucide-react";
+import { Loader2, MessageSquarePlus, Trash2 } from "lucide-react";
 import { useChatsContext } from "@/contexts/chats-context";
 import {
   Sidebar,
@@ -15,7 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
-  const { chats, createChat, deleteChat } = useChatsContext();
+  const { chats, createChat, deleteChat, streamingChatIds } =
+    useChatsContext();
   const navigate = useNavigate();
   const params = useParams({ strict: false }) as { chatId?: string };
   const activeChatId = params.chatId;
@@ -65,6 +66,9 @@ export function AppSidebar() {
                     <span className="truncate flex-1">
                       {chat.title || "New chat"}
                     </span>
+                    {streamingChatIds.includes(chat.id) && (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                    )}
                     <button
                       onClick={(e) => handleDeleteChat(e, chat.id)}
                       className="opacity-0 group-hover/item:opacity-100 hover:text-destructive transition-opacity"

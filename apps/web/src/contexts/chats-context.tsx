@@ -7,6 +7,9 @@ interface ChatsContextValue {
   createChat: () => Promise<Chat>;
   deleteChat: (id: string) => Promise<void>;
   updateChatTitle: (id: string, title: string) => void;
+  streamingChatIds: string[];
+  addStreamingChat: (chatId: string) => void;
+  removeStreamingChat: (chatId: string) => void;
 }
 
 const ChatsContext = createContext<ChatsContextValue | null>(null);

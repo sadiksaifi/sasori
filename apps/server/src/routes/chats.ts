@@ -45,6 +45,11 @@ chatsRouter.post("/", (c) => {
   });
 });
 
+// Get chatIds with active streams
+chatsRouter.get("/streaming", (c) => {
+  return c.json(sessionManager.getActiveSessionIds());
+});
+
 // Delete a chat
 chatsRouter.delete("/:id", (c) => {
   const id = c.req.param("id");

@@ -9,6 +9,8 @@ export type ServerMessage =
   | { type: "done"; result: string }
   | { type: "error"; message: string }
   | { type: "cancelled" }
+  | { type: "stream_resume"; accumulatedText: string }
+  | { type: "stream_active" }
   | {
       type: "history";
       messages: Array<{

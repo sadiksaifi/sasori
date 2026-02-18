@@ -17,8 +17,20 @@ export function ChatContainer({ chatId }: { chatId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
-  const { updateChatTitle } = useChatsContext();
+  const { updateChatTitle, addStreamingChat, removeStreamingChat } =
+    useChatsContext();
   const isFirstMessageRef = useRef(true);
+  const hasNotifiedStreamingRef = useRef(false);
+
+  // Use refs to avoid adding dependencies to handleMessage
+  const addStreamingChatRef = useRef(addStreamingChat);
+  const removeStreamingChatRef = useRef(removeStreamingChat);
+  const chatIdRef = useRef(chatId);
+  useEffect(() => {
+    addStreamingChatRef.current = addStreamingChat;
+    removeStreamingChatRef.current = removeStreamingChat;
+    chatIdRef.current = chatId;
+  }, [addStreamingChat, removeStreamingChat, chatId]);
 
   // Reset state when chatId changes
   useEffect(() => {
@@ -26,6 +38,7 @@ export function ChatContainer({ chatId }: { chatId: string }) {
     setIsStreaming(false);
     setIsLoadingHistory(true);
     isFirstMessageRef.current = true;
+    hasNotifiedStreamingRef.current = false;
   }, [chatId]);
 
   const handleMessage = useCallback((data: string) => {
@@ -48,6 +61,26 @@ export function ChatContainer({ chatId }: { chatId: string }) {
         setIsLoadingHistory(false);
         break;
 
+      case "stream_resume":
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: parsed.accumulatedText },
+        ]);
+        setIsStreaming(true);
+        if (!hasNotifiedStreamingRef.current) {
+          hasNotifiedStreamingRef.current = true;
+          addStreamingChatRef.current(chatIdRef.current);
+        }
+        break;
+
+      case "stream_active":
+        setIsStreaming(true);
+        if (!hasNotifiedStreamingRef.current) {
+          hasNotifiedStreamingRef.current = true;
+          addStreamingChatRef.current(chatIdRef.current);
+        }
+        break;
+
       case "text_delta":
         setMessages((prev) => {
           const last = prev[prev.length - 1];
@@ -60,6 +93,10 @@ export function ChatContainer({ chatId }: { chatId: string }) {
           return [...prev, { role: "assistant", content: parsed.text }];
         });
         setIsStreaming(true);
+        if (!hasNotifiedStreamingRef.current) {
+          hasNotifiedStreamingRef.current = true;
+          addStreamingChatRef.current(chatIdRef.current);
+        }
         break;
 
       case "done":
@@ -72,15 +109,21 @@ export function ChatContainer({ chatId }: { chatId: string }) {
           return prev;
         });
         setIsStreaming(false);
+        hasNotifiedStreamingRef.current = false;
+        removeStreamingChatRef.current(chatIdRef.current);
         break;
 
       case "error":
         toast.error(parsed.message || "Something went wrong");
         setIsStreaming(false);
+        hasNotifiedStreamingRef.current = false;
+        removeStreamingChatRef.current(chatIdRef.current);
         break;
 
       case "cancelled":
         setIsStreaming(false);
+        hasNotifiedStreamingRef.current = false;
+        removeStreamingChatRef.current(chatIdRef.current);
         break;
     }
   }, []);
@@ -101,6 +144,8 @@ export function ChatContainer({ chatId }: { chatId: string }) {
 
       setMessages((prev) => [...prev, { role: "user", content: text }]);
       setIsStreaming(true);
+      hasNotifiedStreamingRef.current = true;
+      addStreamingChatRef.current(chatId);
       send(JSON.stringify({ type: "prompt", text }));
     },
     [send, chatId, updateChatTitle],
