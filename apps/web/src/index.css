@@ -126,3 +126,27 @@
     @apply font-sans;
   }
 }
+
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot {
+  animation: typing-bounce 1.2s ease-in-out infinite;
+}
+
+/* Gradient fade above the input bar — creates depth between compose area and messages */
+.input-top-gradient {
+  background: linear-gradient(to top, var(--background) 0%, transparent 100%);
+}
+
+/* Scroll area fade masks — messages dissolve at top and bottom edges */
+.scroll-fade-mask {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 3%,
+    black 97%,
+    transparent 100%
+  );
+}
