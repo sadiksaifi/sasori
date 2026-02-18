@@ -63,18 +63,41 @@ class SessionManager {
 
     session.done = spawnClaude(broadcast, prompt, controller.signal, onDelta)
       .then(async () => {
-        // Save assistant message to DB if we got any text
-        if (session.accumulatedText) {
-          await db.insert(messages).values({
-            id: crypto.randomUUID(),
-            chatId,
-            role: "assistant",
-            content: session.accumulatedText,
-          });
+        // Prefer accumulated text_delta text; fall back to the done result
+        let text = session.accumulatedText;
+        if (!text) {
+          const doneMsg = session.accumulatedMessages.find(
+            (m): m is Extract<ServerMessage, { type: "done" }> =>
+              m.type === "done",
+          );
+          if (doneMsg?.result) text = doneMsg.result;
+        }
+
+        if (text) {
+          try {
+            await db.insert(messages).values({
+              id: crypto.randomUUID(),
+              chatId,
+              role: "assistant",
+              content: text,
+            });
+          } catch (err) {
+            console.error(`[session] Failed to save assistant message for chat ${chatId}:`, err);
+            broadcast({
+              type: "error",
+              message: "Failed to save assistant response. Please try again.",
+            });
+          }
+        } else {
+          console.warn(`[session] No assistant text to save for chat ${chatId}`);
         }
       })
       .catch((err) => {
         console.error(`[session] Stream error for chat ${chatId}:`, err);
+        broadcast({
+          type: "error",
+          message: "Stream failed. Please try again.",
+        });
       })
       .finally(() => {
         this.sessions.delete(chatId);

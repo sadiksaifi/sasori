@@ -1,5 +1,5 @@
 import type { ServerWebSocket } from "bun";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@sasori/db";
 import { chats, messages } from "@sasori/db/schema";
 import { sessionManager } from "../session/manager";
@@ -66,34 +66,35 @@ export function handleMessage(
   if (msg.type === "prompt") {
     console.log(`[ws] Prompt received for chat ${chatId}`);
 
-    // Save user message to DB
-    db.insert(messages)
-      .values({
-        id: crypto.randomUUID(),
-        chatId,
-        role: "user",
-        content: msg.text,
-      })
-      .run();
+    // Save user message to DB and update chat
+    try {
+      db.insert(messages)
+        .values({
+          id: crypto.randomUUID(),
+          chatId,
+          role: "user",
+          content: msg.text,
+        })
+        .run();
 
-    // Update chat title from first message if no title yet
-    const chat = db
-      .select({ title: chats.title })
-      .from(chats)
-      .where(eq(chats.id, chatId))
-      .get();
-
-    if (chat && !chat.title) {
+      // Set title from first message (COALESCE keeps existing title)
       const title = msg.text.slice(0, 50);
       db.update(chats)
-        .set({ title, updatedAt: new Date() })
+        .set({
+          title: sql`COALESCE(${chats.title}, ${title})`,
+          updatedAt: new Date(),
+        })
         .where(eq(chats.id, chatId))
         .run();
-    } else {
-      db.update(chats)
-        .set({ updatedAt: new Date() })
-        .where(eq(chats.id, chatId))
-        .run();
+    } catch (err) {
+      console.error(`[ws] Failed to save user message for chat ${chatId}:`, err);
+      ws.send(
+        JSON.stringify({
+          type: "error",
+          message: "Failed to save message. Please try again.",
+        }),
+      );
+      return;
     }
 
     // Check if stream already active

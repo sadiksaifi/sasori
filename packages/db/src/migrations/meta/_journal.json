@@ -8,6 +8,13 @@
       "when": 1771412447184,
       "tag": "0000_safe_rumiko_fujikawa",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1771422439624,
+      "tag": "0001_boring_slyde",
+      "breakpoints": true
     }
   ]
 }
