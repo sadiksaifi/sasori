@@ -1,0 +1,8 @@
+{
+  "extends": "@repo/tsconfig-config/base.json",
+  "files": [],
+  "references": [
+    { "path": "apps/desktop" },
+    { "path": "packages/shared" }
+  ]
+}

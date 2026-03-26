@@ -1,0 +1,42 @@
+appId: com.sasori.desktop
+productName: Sasori
+copyright: "Copyright © 2026 Sasori"
+asar: true
+
+directories:
+  output: out
+  buildResources: build
+
+files:
+  - out/**/*
+  - "!out/**/*.map"
+
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch: arm64
+    - target: zip
+      arch: arm64
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  icon: resources/icon.icns
+  minimumSystemVersion: "26.0"
+  darkModeSupport: true
+  artifactName: "${productName}-${version}-${arch}.${ext}"
+
+dmg:
+  artifactName: "${productName}-${version}.${ext}"
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+publish:
+  provider: generic
+  url: https://example.com/releases

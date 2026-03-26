@@ -1,0 +1,15 @@
+{
+  "extends": "@repo/tsconfig-config/react.json",
+  "compilerOptions": {
+    "outDir": "dist/renderer",
+    "paths": {
+      "@/*": ["./src/renderer/*"],
+      "@conveyor/*": ["./src/conveyor/*"]
+    }
+  },
+  "include": [
+    "src/renderer/**/*",
+    "src/conveyor/**/*",
+    "src/preload/index.d.ts"
+  ]
+}

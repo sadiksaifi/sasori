@@ -1,0 +1,264 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * ============================================================================
+ * Sasori Design Tokens — macOS Human Interface Guidelines
+ * ============================================================================
+ *
+ * Typography:  text-large-title  text-title-1  text-title-2  text-title-3
+ *              text-headline     text-body     text-callout   text-subheadline
+ *              text-footnote     text-caption
+ *
+ * Colors:      text-label  bg-background  bg-accent  border-separator  ...
+ *
+ * Spacing:     p-window  gap-section  gap-group  gap-item  gap-related
+ *              h-toolbar  w-sidebar  h-sidebar-item  h-control  ...
+ *
+ * Radii:       rounded-xs  rounded-sm  rounded-md  rounded-lg  rounded-xl
+ *
+ * Font:        font-sans
+ */
+
+@theme inline {
+  --color-*: initial;
+  --text-*: initial;
+  --radius-*: initial;
+  --font-*: initial;
+
+  /* =========================================================================
+   * Font Family
+   * ======================================================================= */
+
+  --font-sans: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  /* =========================================================================
+   * Typography — macOS NSFont.TextStyle
+   *
+   * Usage: className="text-body"  className="text-headline"  etc.
+   * Each utility sets font-size, line-height, and optionally weight + tracking.
+   * ======================================================================= */
+
+  --text-large-title: 26px;
+  --text-large-title--line-height: 32px;
+  --text-large-title--font-weight: 700;
+  --text-large-title--letter-spacing: 0.36px;
+
+  --text-title-1: 22px;
+  --text-title-1--line-height: 28px;
+  --text-title-1--font-weight: 700;
+  --text-title-1--letter-spacing: 0.35px;
+
+  --text-title-2: 17px;
+  --text-title-2--line-height: 22px;
+  --text-title-2--font-weight: 600;
+  --text-title-2--letter-spacing: -0.43px;
+
+  --text-title-3: 15px;
+  --text-title-3--line-height: 20px;
+  --text-title-3--font-weight: 600;
+  --text-title-3--letter-spacing: -0.23px;
+
+  --text-headline: 13px;
+  --text-headline--line-height: 18px;
+  --text-headline--font-weight: 700;
+  --text-headline--letter-spacing: -0.08px;
+
+  --text-body: 13px;
+  --text-body--line-height: 18px;
+  --text-body--letter-spacing: -0.08px;
+
+  --text-callout: 12px;
+  --text-callout--line-height: 16px;
+
+  --text-subheadline: 11px;
+  --text-subheadline--line-height: 14px;
+  --text-subheadline--letter-spacing: 0.06px;
+
+  --text-footnote: 10px;
+  --text-footnote--line-height: 13px;
+  --text-footnote--letter-spacing: 0.12px;
+
+  --text-caption: 10px;
+  --text-caption--line-height: 13px;
+  --text-caption--font-weight: 500;
+  --text-caption--letter-spacing: 0.12px;
+
+  /* =========================================================================
+   * Colors — macOS NSColor system colors (values defined in :root below)
+   * ======================================================================= */
+
+  --color-label: var(--label);
+  --color-secondary-label: var(--secondary-label);
+  --color-tertiary-label: var(--tertiary-label);
+  --color-quaternary-label: var(--quaternary-label);
+
+  --color-background: var(--background);
+  --color-secondary-background: var(--secondary-background);
+  --color-grouped-background: var(--grouped-background);
+  --color-sidebar-background: var(--sidebar-background);
+
+  --color-separator: var(--separator);
+  --color-opaque-separator: var(--opaque-separator);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-sidebar-selected: var(--sidebar-selected);
+  --color-sidebar-hover: var(--sidebar-hover);
+
+  --color-control-background: var(--control-background);
+
+  /* =========================================================================
+   * Corner Radii — macOS standard (derived from base --radius)
+   *
+   * xs: mini controls, tooltips
+   * sm: buttons, text fields, sidebar items
+   * md: cards, grouped content, popovers
+   * lg: large cards, preferences panes
+   * xl: sheets, dialogs
+   * ======================================================================= */
+
+  --radius-xs: calc(var(--radius) * 0.375);
+  --radius-sm: calc(var(--radius) * 0.625);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
+
+  /* =========================================================================
+   * Spacing — semantic layout tokens (4pt grid)
+   *
+   * Generates ALL spacing utilities: p-window, gap-section, h-toolbar, w-sidebar, etc.
+   * ======================================================================= */
+
+  /* Content padding */
+  --spacing-window: var(--window-padding);
+
+  /* Gaps between elements */
+  --spacing-section: var(--space-section);
+  --spacing-group: var(--space-group);
+  --spacing-item: var(--space-item);
+  --spacing-related: var(--space-related);
+
+  /* Component sizing */
+  --spacing-toolbar: var(--toolbar-height);
+  --spacing-sidebar: var(--sidebar-width);
+  --spacing-sidebar-item: var(--sidebar-item-h);
+  --spacing-sidebar-item-x: var(--sidebar-item-px);
+  --spacing-sidebar-section-x: var(--sidebar-section-px);
+  --spacing-control: var(--control-h);
+  --spacing-control-sm: var(--control-h-sm);
+  --spacing-control-lg: var(--control-h-lg);
+}
+
+/*
+ * ============================================================================
+ * Token Values
+ * ============================================================================
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Radius base */
+  --radius: 8px;
+
+  /* Layout */
+  --window-padding: 20px;
+  --space-section: 24px;
+  --space-group: 16px;
+  --space-item: 8px;
+  --space-related: 4px;
+  --toolbar-height: 52px;
+  --sidebar-width: 240px;
+  --sidebar-item-h: 28px;
+  --sidebar-item-px: 8px;
+  --sidebar-section-px: 12px;
+  --control-h: 22px;
+  --control-h-sm: 20px;
+  --control-h-lg: 28px;
+
+  /* Colors — Light */
+  --label: rgba(0, 0, 0, 0.85);
+  --secondary-label: rgba(0, 0, 0, 0.5);
+  --tertiary-label: rgba(0, 0, 0, 0.26);
+  --quaternary-label: rgba(0, 0, 0, 0.1);
+
+  --background: #ffffff;
+  --secondary-background: #f5f5f5;
+  --grouped-background: #ececec;
+  --sidebar-background: transparent;
+
+  --separator: rgba(0, 0, 0, 0.1);
+  --opaque-separator: #c6c6c8;
+
+  --accent: #007aff;
+  --accent-foreground: #ffffff;
+
+  --sidebar-selected: rgba(0, 0, 0, 0.08);
+  --sidebar-hover: rgba(0, 0, 0, 0.04);
+
+  --control-background: #ffffff;
+}
+
+/* Colors — Dark */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --label: rgba(255, 255, 255, 0.85);
+    --secondary-label: rgba(255, 255, 255, 0.55);
+    --tertiary-label: rgba(255, 255, 255, 0.25);
+    --quaternary-label: rgba(255, 255, 255, 0.1);
+
+    --background: #1e1e1e;
+    --secondary-background: #2a2a2c;
+    --grouped-background: #323234;
+    --sidebar-background: transparent;
+
+    --separator: rgba(255, 255, 255, 0.1);
+    --opaque-separator: #38383a;
+
+    --accent: #0a84ff;
+    --accent-foreground: #ffffff;
+
+    --sidebar-selected: rgba(255, 255, 255, 0.1);
+    --sidebar-hover: rgba(255, 255, 255, 0.05);
+
+    --control-background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/*
+ * ============================================================================
+ * Utilities & Base
+ * ============================================================================
+ */
+
+@utility drag-region {
+  -webkit-app-region: drag;
+}
+
+@utility no-drag {
+  -webkit-app-region: no-drag;
+}
+
+@layer base {
+  * {
+    @apply border-separator;
+  }
+
+  html,
+  body {
+    @apply font-sans text-body text-label antialiased;
+    margin: 0;
+    overflow: hidden;
+    /* Transparent so Electron vibrancy shows through the sidebar */
+    background: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  main {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}

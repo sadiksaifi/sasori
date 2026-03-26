@@ -1,0 +1,21 @@
+node_modules/
+dist/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Electron
+*.dmg
+*.zip
+
+# Generated
+routeTree.gen.ts
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
