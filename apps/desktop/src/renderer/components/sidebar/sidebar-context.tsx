@@ -39,6 +39,7 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
   const sidebarToggleRef = useRef<HTMLButtonElement | null>(null);
   const toolbarToggleRef = useRef<HTMLButtonElement | null>(null);
   const animatingRef = useRef(false);
+  const lastWidthRef = useRef(280);
   const isOpenRef = useRef(isOpen);
   isOpenRef.current = isOpen;
 
@@ -52,6 +53,12 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
 
     if (open) {
       // CLOSING: hide real icon, show floating clone, collapse panel simultaneously
+      // Store current width before collapsing so we know where to animate back to
+      const currentSize = panel?.getSize();
+      if (currentSize && currentSize.inPixels > 0) {
+        lastWidthRef.current = currentSize.inPixels;
+      }
+
       setSidebarIconHidden(true);
 
       const sourceRect = sidebarToggleRef.current?.getBoundingClientRect();
@@ -84,11 +91,14 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
       setSidebarIconHidden(true);
 
       const sourceRect = toolbarToggleRef.current?.getBoundingClientRect();
+      // Target: button is at justify-end px-2 inside the sidebar
+      const targetX = lastWidthRef.current - 8 - 28;
+
       if (sourceRect) {
         setTransitionIcon({
           x: sourceRect.left,
           y: sourceRect.top,
-          targetX: 244, // estimated, refined below
+          targetX,
           targetY: sourceRect.top,
           animating: false,
         });
@@ -100,9 +110,7 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
 
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          const panelRect = el?.getBoundingClientRect();
-          const targetX = panelRect ? panelRect.right - 8 - 28 : 244;
-          setTransitionIcon((prev) => (prev ? { ...prev, targetX, animating: true } : null));
+          setTransitionIcon((prev) => (prev ? { ...prev, animating: true } : null));
         });
       });
 

@@ -85,8 +85,8 @@ function RootLayoutInner() {
                   aria-label="Toggle Sidebar"
                   onClick={toggleSidebar}
                   className={cn(
-                    "no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-opacity duration-75 hover:bg-sidebar-hover",
-                    sidebarIconHidden && "opacity-0",
+                    "no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label hover:bg-sidebar-hover",
+                    sidebarIconHidden ? "invisible" : "",
                   )}
                 >
                   <SidebarSimple size={16} />
