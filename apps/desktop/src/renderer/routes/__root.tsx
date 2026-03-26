@@ -137,7 +137,7 @@ function RootLayoutInner() {
         <ResizablePanel id="content" defaultSize="100%">
           <div className="flex h-full flex-1 flex-col bg-background">
             <Toolbar />
-            <main className="flex-1 overflow-auto p-window">
+            <main className="flex-1 flex flex-col overflow-hidden">
               <Outlet />
             </main>
           </div>

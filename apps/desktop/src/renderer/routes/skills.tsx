@@ -22,7 +22,7 @@ function Skills() {
   });
 
   return (
-    <div className="-m-window" style={{ height: "calc(100% + var(--window-padding) * 2)" }}>
+    <div className="flex-1">
       <SkillsWebview initialPath={path} />
     </div>
   );
