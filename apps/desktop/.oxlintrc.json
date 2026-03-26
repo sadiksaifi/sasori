@@ -53,7 +53,7 @@
     "react/no-direct-mutation-state": "error",
     "react/void-dom-elements-no-children": "error",
     "react/forward-ref-uses-ref": "warn",
-    "react/no-unknown-property": "warn",
+    "react/no-unknown-property": ["warn", { "ignore": ["partition"] }],
     "react/no-unsafe": "error",
 
     // ── React style & perf ──────────────────────────────────────

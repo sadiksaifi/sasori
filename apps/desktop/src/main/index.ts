@@ -1,7 +1,9 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, session } from "electron";
 import { join } from "node:path";
 import { registerAllHandlers } from "../conveyor/handlers";
 import { createApplicationMenu } from "./menu";
+
+const ALLOWED_WEBVIEW_ORIGIN = "https://skills.sh";
 
 // Set app name before anything else — Electron defaults to package.json "name"
 app.name = "Sasori";
@@ -24,7 +26,19 @@ function createWindow(): BrowserWindow {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
+      webviewTag: true,
     },
+  });
+
+  // Security: restrict webview creation to allowed origins only
+  mainWindow.webContents.on("will-attach-webview", (event, webPreferences, params) => {
+    delete webPreferences.preload;
+    webPreferences.nodeIntegration = false;
+    webPreferences.contextIsolation = true;
+
+    if (!params.src.startsWith(ALLOWED_WEBVIEW_ORIGIN)) {
+      event.preventDefault();
+    }
   });
 
   mainWindow.on("ready-to-show", () => mainWindow.show());
@@ -49,6 +63,10 @@ app.whenReady().then(() => {
     copyright: "Copyright © 2026 Sadik Saifi",
     credits: "Multi-model AI coding agent harness",
   });
+
+  // Pre-warm the skills webview session and preconnect for faster first load
+  const skillsSession = session.fromPartition("persist:skills");
+  skillsSession.preconnect({ url: ALLOWED_WEBVIEW_ORIGIN, numSockets: 2 });
 
   createWindow();
 

@@ -2,10 +2,19 @@ import { SidebarIcon, PaperPlaneTiltIcon, ArrowSquareOutIcon } from "@phosphor-i
 import { cn } from "@/lib/utils";
 import { useSidebar, TRAFFIC_LIGHT_ZONE } from "./sidebar/sidebar-context";
 import { useNewSession } from "@/hooks/use-new-session";
+import { useToolbarStore, type ToolbarAction } from "@/stores/toolbar-store";
 
 export function Toolbar() {
   const { isOpen, toolbarInset, toggleSidebar, toolbarToggleRef } = useSidebar();
   const handleNewSession = useNewSession();
+  const config = useToolbarStore((s) => s.config);
+
+  const title = config?.title ?? "New Session";
+  const onTitleClick = config?.onTitleClick ?? handleNewSession;
+  const actions: ToolbarAction[] = config?.actions ?? [
+    { key: "push", label: "Push", icon: PaperPlaneTiltIcon },
+    { key: "open", label: "Open", icon: ArrowSquareOutIcon },
+  ];
 
   return (
     <header
@@ -30,29 +39,26 @@ export function Toolbar() {
         )}
         <button
           type="button"
-          onClick={handleNewSession}
+          onClick={onTitleClick}
           className="text-body text-secondary-label no-drag select-none transition-colors hover:text-label"
         >
-          New Session
+          {title}
         </button>
       </div>
 
       {/* Right */}
       <div className="flex items-center gap-related px-3">
-        <button
-          type="button"
-          className="no-drag flex h-control items-center gap-related rounded-sm px-2 text-callout text-secondary-label transition-colors hover:bg-sidebar-hover"
-        >
-          <PaperPlaneTiltIcon size={14} />
-          Push
-        </button>
-        <button
-          type="button"
-          className="no-drag flex h-control items-center gap-related rounded-sm px-2 text-callout text-secondary-label transition-colors hover:bg-sidebar-hover"
-        >
-          <ArrowSquareOutIcon size={14} />
-          Open
-        </button>
+        {actions.map((action) => (
+          <button
+            key={action.key}
+            type="button"
+            onClick={action.onClick}
+            className="no-drag flex h-control-lg items-center gap-2.5 rounded-sm border border-separator bg-control-background px-3 text-callout text-secondary-label transition-colors hover:brightness-110 active:brightness-95"
+          >
+            <action.icon size={14} />
+            {action.label}
+          </button>
+        ))}
       </div>
     </header>
   );
