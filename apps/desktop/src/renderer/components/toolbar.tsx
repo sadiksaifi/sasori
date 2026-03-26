@@ -1,4 +1,4 @@
-import { Sidebar, PaperPlaneTilt, ArrowSquareOut } from "@phosphor-icons/react";
+import { Sidebar as SidebarIcon, PaperPlaneTilt, ArrowSquareOut } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useSidebar, TRAFFIC_LIGHT_ZONE } from "./sidebar/sidebar-context";
 
@@ -23,7 +23,7 @@ export function Toolbar() {
             onClick={toggleSidebar}
             className="no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-colors hover:bg-sidebar-hover"
           >
-            <Sidebar size={16} />
+            <SidebarIcon size={16} />
           </button>
         )}
         <span className="text-body text-secondary-label no-drag select-none">New Thread</span>
