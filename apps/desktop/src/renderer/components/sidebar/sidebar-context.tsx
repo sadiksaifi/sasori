@@ -104,7 +104,7 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
         });
       }
 
-      setIsOpen(true);
+      // Don't setIsOpen(true) yet — keep pl-[78px] on toolbar during animation
       if (el) el.style.transition = `flex ${PANEL_SLIDE_MS}ms ease-in-out`;
       if (panel) panel.expand();
 
@@ -117,6 +117,7 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
       setTimeout(() => {
         if (el) el.style.transition = "";
         setTransitionIcon(null);
+        setIsOpen(true);
         setSidebarIconHidden(false);
         animatingRef.current = false;
       }, PANEL_SLIDE_MS + 50);

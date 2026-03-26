@@ -54,16 +54,17 @@ describe("SidebarProvider", () => {
     });
     expect(result.current.isOpen).toBe(false);
 
-    // Open — isOpen true immediately, icon hidden until panel expands
+    // Open — isOpen stays false during animation, becomes true after
     act(() => {
       result.current.toggleSidebar();
     });
-    expect(result.current.isOpen).toBe(true);
+    expect(result.current.isOpen).toBe(false);
     expect(result.current.sidebarIconHidden).toBe(true);
 
     act(() => {
       vi.advanceTimersByTime(300);
     });
+    expect(result.current.isOpen).toBe(true);
     expect(result.current.sidebarIconHidden).toBe(false);
   });
 

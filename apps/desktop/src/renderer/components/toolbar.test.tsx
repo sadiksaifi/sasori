@@ -58,14 +58,14 @@ describe("Toolbar", () => {
     const toggleBtn = screen.getByRole("button", { name: /toggle sidebar/i });
     fireEvent.click(toggleBtn);
 
-    // isOpen becomes true immediately on open
+    // isOpen stays false during animation — padding stays
     const toolbar = screen.getByRole("banner");
-    expect(toolbar.className).not.toContain("pl-[78px]");
-    expect(screen.queryByRole("button", { name: /toggle sidebar/i })).not.toBeInTheDocument();
+    expect(toolbar.className).toContain("pl-[78px]");
 
-    // Finish animation
+    // After animation completes, padding removed
     act(() => {
       vi.advanceTimersByTime(350);
     });
+    expect(toolbar.className).not.toContain("pl-[78px]");
   });
 });
