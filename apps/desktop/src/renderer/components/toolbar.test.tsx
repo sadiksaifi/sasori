@@ -3,6 +3,10 @@ import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import { Toolbar } from "./toolbar";
 import { SidebarProvider, TRAFFIC_LIGHT_ZONE } from "./sidebar/sidebar-context";
 
+vi.mock("@/hooks/use-new-session", () => ({
+  useNewSession: () => vi.fn(),
+}));
+
 beforeEach(() => {
   vi.useFakeTimers();
 });

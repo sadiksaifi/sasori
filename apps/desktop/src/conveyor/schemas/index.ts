@@ -1,10 +1,12 @@
 import type { z } from "zod";
 import { appSchemas } from "./app-schema";
+import { dialogSchemas } from "./dialog-schema";
 import { windowSchemas } from "./window-schema";
 import { webcontentSchemas } from "./webcontent-schema";
 
 export const ipcSchemas = {
   ...appSchemas,
+  ...dialogSchemas,
   ...windowSchemas,
   ...webcontentSchemas,
 } as const;

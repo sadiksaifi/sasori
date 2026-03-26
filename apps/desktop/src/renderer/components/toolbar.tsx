@@ -1,15 +1,17 @@
 import { SidebarIcon, PaperPlaneTiltIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useSidebar, TRAFFIC_LIGHT_ZONE } from "./sidebar/sidebar-context";
+import { useNewSession } from "@/hooks/use-new-session";
 
 export function Toolbar() {
   const { isOpen, toolbarInset, toggleSidebar, toolbarToggleRef } = useSidebar();
+  const handleNewSession = useNewSession();
 
   return (
     <header
       role="banner"
       className={cn(
-        "flex h-toolbar shrink-0 items-center justify-between px-3 drag-region transition-[padding-left] duration-200 ease-in-out",
+        "flex border-b h-toolbar shrink-0 items-center justify-between px-3 drag-region transition-[padding-left] duration-200 ease-in-out",
         toolbarInset && `pl-[${TRAFFIC_LIGHT_ZONE}px]`,
       )}
     >
@@ -26,7 +28,13 @@ export function Toolbar() {
             <SidebarIcon size={16} />
           </button>
         )}
-        <span className="text-body text-secondary-label no-drag select-none">New Thread</span>
+        <button
+          type="button"
+          onClick={handleNewSession}
+          className="text-body text-secondary-label no-drag select-none transition-colors hover:text-label"
+        >
+          New Session
+        </button>
       </div>
 
       {/* Right */}

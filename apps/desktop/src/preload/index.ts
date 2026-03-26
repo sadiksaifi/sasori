@@ -12,6 +12,9 @@ const conveyor = {
   app: {
     version: () => invoke("app:version"),
   },
+  dialog: {
+    openDirectory: () => invoke("dialog:open-directory"),
+  },
   window: {
     init: () => invoke("window:init"),
     minimize: () => invoke("window:minimize"),

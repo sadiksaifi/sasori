@@ -1,9 +1,9 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import {
-  HouseIcon,
+  ChatDotsIcon,
   MagnifyingGlassIcon,
   SparkleIcon,
-  FolderSimpleIcon,
+  FolderPlusIcon,
   GearSixIcon,
   SidebarSimpleIcon,
 } from "@phosphor-icons/react";
@@ -17,27 +17,27 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarLink,
+  SidebarAction,
+  ProjectTree,
   type NavItem,
 } from "@/components/sidebar";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Toolbar } from "@/components/toolbar";
 import { useElectronEvents } from "@/hooks/use-electron-events";
+import { useNewSession } from "@/hooks/use-new-session";
+import { useConveyor } from "@/hooks/use-conveyor";
+import { useProjectStore } from "@/stores/project-store";
 import { cn } from "@/lib/utils";
+import { useCallback } from "react";
 
 export const Route = createRootRoute({
   component: RootLayout,
 });
 
-const topNavItems: NavItem[] = [
-  { to: "/", label: "Home", icon: HouseIcon },
+const navItems: NavItem[] = [
   { to: "/search", label: "Search", icon: MagnifyingGlassIcon },
   { to: "/skills", label: "Skills", icon: SparkleIcon },
 ];
-
-const threadItems = Array.from({ length: 18 }, (_, i) => ({
-  id: `thread-${i + 1}`,
-  label: `Thread ${i + 1}`,
-}));
 
 function RootLayout() {
   return (
@@ -57,6 +57,16 @@ function RootLayoutInner() {
     panelElementRef,
     sidebarToggleRef,
   } = useSidebar();
+
+  const handleNewSession = useNewSession();
+  const dialog = useConveyor("dialog");
+  const addProject = useProjectStore((s) => s.addProject);
+
+  const handleAddProject = useCallback(async () => {
+    const { path } = await dialog.openDirectory();
+    if (!path) return;
+    addProject(path);
+  }, [dialog, addProject]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -88,28 +98,27 @@ function RootLayoutInner() {
                 </button>
               </div>
               <nav className="flex flex-col gap-related px-sidebar-section-x pb-2">
-                {topNavItems.map((item) => (
+                <SidebarAction label="New Session" icon={ChatDotsIcon} onClick={handleNewSession} />
+                {navItems.map((item) => (
                   <SidebarLink key={item.to} item={item} />
                 ))}
               </nav>
             </SidebarHeader>
             <SidebarFixedItem>
-              <div className="px-sidebar-section-x py-1">
-                <span className="text-subheadline font-medium text-secondary-label">Threads</span>
+              <div className="flex items-center justify-between px-sidebar-section-x py-1">
+                <span className="text-subheadline font-medium text-secondary-label">Projects</span>
+                <button
+                  type="button"
+                  onClick={handleAddProject}
+                  className="rounded-xs p-0.5 text-tertiary-label transition-colors hover:text-secondary-label"
+                  aria-label="Add project"
+                >
+                  <FolderPlusIcon size={14} />
+                </button>
               </div>
             </SidebarFixedItem>
             <SidebarContent>
-              <div className="flex flex-col gap-related px-sidebar-section-x py-1">
-                {threadItems.map((thread) => (
-                  <div
-                    key={thread.id}
-                    className="flex h-sidebar-item items-center gap-item rounded-sm px-sidebar-item-x text-body text-secondary-label transition-colors duration-75 hover:bg-sidebar-hover"
-                  >
-                    <FolderSimpleIcon size={16} />
-                    {thread.label}
-                  </div>
-                ))}
-              </div>
+              <ProjectTree />
             </SidebarContent>
             <SidebarFooter>
               <div className="border-t border-separator px-sidebar-section-x py-2">
