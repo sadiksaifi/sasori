@@ -1,33 +1,149 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Sidebar } from "@/components/sidebar";
-import { Titlebar } from "@/components/titlebar";
+import {
+  House,
+  MagnifyingGlass,
+  Sparkle,
+  FolderSimple,
+  GearSix,
+  SidebarSimple,
+} from "@phosphor-icons/react";
+import {
+  SidebarProvider,
+  useSidebar,
+  PANEL_SLIDE_MS,
+  Sidebar,
+  SidebarHeader,
+  SidebarFixedItem,
+  SidebarContent,
+  SidebarFooter,
+  SidebarLink,
+  type NavItem,
+} from "@/components/sidebar";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { Toolbar } from "@/components/toolbar";
 import { useElectronEvents } from "@/hooks/use-electron-events";
-import { isDev } from "@repo/shared/env";
+import { cn } from "@/lib/utils";
 
 export const Route = createRootRoute({
   component: RootLayout,
 });
 
+const topNavItems: NavItem[] = [
+  { to: "/", label: "Home", icon: House },
+  { to: "/search", label: "Search", icon: MagnifyingGlass },
+  { to: "/skills", label: "Skills", icon: Sparkle },
+];
+
+const threadItems = Array.from({ length: 18 }, (_, i) => ({
+  id: `thread-${i + 1}`,
+  label: `Thread ${i + 1}`,
+}));
+
 function RootLayout() {
+  return (
+    <SidebarProvider>
+      <RootLayoutInner />
+    </SidebarProvider>
+  );
+}
+
+function RootLayoutInner() {
   useElectronEvents();
+  const {
+    sidebarIconHidden,
+    transitionIcon,
+    toggleSidebar,
+    panelRef,
+    panelElementRef,
+    sidebarToggleRef,
+  } = useSidebar();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
-      {/* Sidebar — transparent bg lets Electron vibrancy show through */}
-      <Sidebar />
+      <ResizablePanelGroup orientation="horizontal">
+        <ResizablePanel
+          id="sidebar"
+          panelRef={panelRef}
+          elementRef={panelElementRef}
+          defaultSize="280px"
+          minSize="250px"
+          maxSize="360px"
+          collapsible
+          collapsedSize={0}
+        >
+          <Sidebar>
+            <SidebarHeader>
+              <div className="flex h-toolbar items-center justify-end px-2 drag-region">
+                <button
+                  ref={sidebarToggleRef}
+                  type="button"
+                  aria-label="Toggle Sidebar"
+                  onClick={toggleSidebar}
+                  className={cn(
+                    "no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label hover:bg-sidebar-hover",
+                    sidebarIconHidden ? "invisible" : "",
+                  )}
+                >
+                  <SidebarSimple size={16} />
+                </button>
+              </div>
+              <nav className="flex flex-col gap-related px-sidebar-section-x pb-2">
+                {topNavItems.map((item) => (
+                  <SidebarLink key={item.to} item={item} />
+                ))}
+              </nav>
+            </SidebarHeader>
+            <SidebarFixedItem>
+              <div className="px-sidebar-section-x py-1">
+                <span className="text-subheadline font-medium text-secondary-label">Threads</span>
+              </div>
+            </SidebarFixedItem>
+            <SidebarContent>
+              <div className="flex flex-col gap-related px-sidebar-section-x py-1">
+                {threadItems.map((thread) => (
+                  <div
+                    key={thread.id}
+                    className="flex h-sidebar-item items-center gap-item rounded-sm px-sidebar-item-x text-body text-secondary-label transition-colors duration-75 hover:bg-sidebar-hover"
+                  >
+                    <FolderSimple size={16} />
+                    {thread.label}
+                  </div>
+                ))}
+              </div>
+            </SidebarContent>
+            <SidebarFooter>
+              <div className="border-t border-separator px-sidebar-section-x py-2">
+                <SidebarLink item={{ to: "/settings", label: "Settings", icon: GearSix }} />
+              </div>
+            </SidebarFooter>
+          </Sidebar>
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel id="content" defaultSize="100%">
+          <div className="flex h-full flex-1 flex-col bg-background">
+            <Toolbar />
+            <main className="flex-1 overflow-auto p-window">
+              <Outlet />
+            </main>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
 
-      {/* Separator line between sidebar and content */}
-      <div className="w-px shrink-0 bg-opaque-separator" />
-
-      {/* Main content — opaque background covers vibrancy */}
-      <div className="flex flex-1 flex-col bg-background">
-        <Titlebar />
-        <main className="flex-1 overflow-auto p-window">
-          <Outlet />
-        </main>
-      </div>
-      {isDev && <TanStackRouterDevtools />}
+      {/* Floating icon that animates between sidebar and toolbar positions */}
+      {transitionIcon && (
+        <div
+          className="pointer-events-none fixed z-50 flex h-sidebar-item w-sidebar-item items-center justify-center text-secondary-label"
+          style={{
+            left: transitionIcon.animating ? transitionIcon.targetX : transitionIcon.x,
+            top: transitionIcon.animating ? transitionIcon.targetY : transitionIcon.y,
+            transition: transitionIcon.animating
+              ? `left ${PANEL_SLIDE_MS}ms ease-in-out, top ${PANEL_SLIDE_MS}ms ease-in-out`
+              : "none",
+          }}
+        >
+          <SidebarSimple size={16} />
+        </div>
+      )}
     </div>
   );
 }

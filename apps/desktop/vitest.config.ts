@@ -5,8 +5,9 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
-    include: ["src/**/*.test.ts"],
-    environment: "node",
+    include: ["src/**/*.test.{ts,tsx}"],
+    environment: "jsdom",
     passWithNoTests: true,
+    setupFiles: ["src/test/setup.ts"],
   },
 });

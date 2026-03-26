@@ -41,7 +41,17 @@ const conveyor = {
 
 const electron = {
   onNavigate: (callback: (path: string) => void) => {
-    ipcRenderer.on("navigate", (_event, path: string) => callback(path));
+    const handler = (_event: Electron.IpcRendererEvent, path: string) => callback(path);
+    ipcRenderer.on("navigate", handler);
+    return () => {
+      ipcRenderer.removeListener("navigate", handler);
+    };
+  },
+  onToggleSidebar: (callback: () => void) => {
+    ipcRenderer.on("toggle-sidebar", callback);
+    return () => {
+      ipcRenderer.removeListener("toggle-sidebar", callback);
+    };
   },
 };
 

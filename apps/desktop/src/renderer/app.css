@@ -177,6 +177,9 @@
   --control-h: 22px;
   --control-h-sm: 20px;
   --control-h-lg: 28px;
+  --sidebar-min-width: 250px;
+  --sidebar-max-width: 360px;
+  --traffic-light-zone: 78px;
 
   /* Colors — Light */
   --label: rgba(0, 0, 0, 0.85);
