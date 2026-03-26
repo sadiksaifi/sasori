@@ -54,7 +54,7 @@ function RootLayout() {
 
 function RootLayoutInner() {
   useElectronEvents();
-  const { sidebarIconHidden, toggleSidebar, panelRef, panelElementRef } = useSidebar();
+  const { toggleSidebar, panelRef, panelElementRef } = useSidebar();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -76,10 +76,7 @@ function RootLayoutInner() {
                   type="button"
                   aria-label="Toggle Sidebar"
                   onClick={toggleSidebar}
-                  className={cn(
-                    "no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-all duration-100 hover:bg-sidebar-hover",
-                    sidebarIconHidden && "-translate-x-1 opacity-0",
-                  )}
+                  className="no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-colors hover:bg-sidebar-hover"
                 >
                   <SidebarSimple size={16} />
                 </button>

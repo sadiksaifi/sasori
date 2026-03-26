@@ -19,7 +19,7 @@ describe("SidebarProvider", () => {
     expect(result.current.isOpen).toBe(true);
   });
 
-  it("toggleSidebar flips isOpen to false after animation", () => {
+  it("toggleSidebar flips isOpen to false after panel slide", () => {
     const { result } = renderHook(() => useSidebar(), {
       wrapper: SidebarProvider,
     });
@@ -28,13 +28,11 @@ describe("SidebarProvider", () => {
       result.current.toggleSidebar();
     });
 
-    // Icon fades first, isOpen still true
+    // isOpen stays true until panel slide completes
     expect(result.current.isOpen).toBe(true);
-    expect(result.current.sidebarIconHidden).toBe(true);
 
-    // After icon fade + panel slide completes
     act(() => {
-      vi.advanceTimersByTime(350);
+      vi.advanceTimersByTime(300);
     });
 
     expect(result.current.isOpen).toBe(false);
@@ -50,7 +48,7 @@ describe("SidebarProvider", () => {
       result.current.toggleSidebar();
     });
     act(() => {
-      vi.advanceTimersByTime(350);
+      vi.advanceTimersByTime(300);
     });
     expect(result.current.isOpen).toBe(false);
 
@@ -63,9 +61,8 @@ describe("SidebarProvider", () => {
     expect(result.current.isOpen).toBe(true);
 
     act(() => {
-      vi.advanceTimersByTime(350);
+      vi.advanceTimersByTime(300);
     });
-    expect(result.current.sidebarIconHidden).toBe(false);
   });
 
   it("throws when useSidebar is used outside SidebarProvider", () => {
