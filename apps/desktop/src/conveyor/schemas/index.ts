@@ -4,6 +4,7 @@ import { dialogSchemas } from "./dialog-schema";
 import { windowSchemas } from "./window-schema";
 import { webcontentSchemas } from "./webcontent-schema";
 import { dbSchemas } from "./db-schema";
+import { contextMenuSchemas } from "./context-menu-schema";
 
 export const ipcSchemas = {
   ...appSchemas,
@@ -11,6 +12,7 @@ export const ipcSchemas = {
   ...windowSchemas,
   ...webcontentSchemas,
   ...dbSchemas,
+  ...contextMenuSchemas,
 } as const;
 
 // --- Type utilities ---

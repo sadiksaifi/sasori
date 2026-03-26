@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import {
   ChatDotsIcon,
+  FunnelIcon,
   MagnifyingGlassIcon,
   SparkleIcon,
   FolderPlusIcon,
@@ -26,7 +27,8 @@ import { Toolbar } from "@/components/toolbar";
 import { useElectronEvents } from "@/hooks/use-electron-events";
 import { useNewSession } from "@/hooks/use-new-session";
 import { useConveyor } from "@/hooks/use-conveyor";
-import { useProjectStore } from "@/stores/project-store";
+import { useContextMenu, type ContextMenuItem } from "@/hooks/use-context-menu";
+import { useProjectStore, type SidebarFilter } from "@/stores/project-store";
 import { useProfileStore } from "@/stores/profile-store";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect } from "react";
@@ -67,12 +69,30 @@ function RootLayoutInner() {
   const handleNewSession = useNewSession();
   const dialog = useConveyor("dialog");
   const addProject = useProjectStore((s) => s.addProject);
+  const sidebarFilter = useProjectStore((s) => s.sidebarFilter);
+  const setSidebarFilter = useProjectStore((s) => s.setSidebarFilter);
+  const showContextMenu = useContextMenu();
 
   const handleAddProject = useCallback(async () => {
     const { path } = await dialog.openDirectory();
     if (!path) return;
     await addProject(path);
   }, [dialog, addProject]);
+
+  const handleFilterClick = useCallback(async () => {
+    const items: ContextMenuItem[] = [
+      { id: "active", label: "Active", type: "checkbox", checked: sidebarFilter === "active" },
+      {
+        id: "archived",
+        label: "Archived",
+        type: "checkbox",
+        checked: sidebarFilter === "archived",
+      },
+      { id: "all", label: "All", type: "checkbox", checked: sidebarFilter === "all" },
+    ];
+    const actionId = await showContextMenu(items);
+    if (actionId) setSidebarFilter(actionId as SidebarFilter);
+  }, [sidebarFilter, setSidebarFilter, showContextMenu]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -113,14 +133,27 @@ function RootLayoutInner() {
             <SidebarFixedItem>
               <div className="flex items-center justify-between px-sidebar-section-x py-1">
                 <span className="text-subheadline font-medium text-secondary-label">Projects</span>
-                <button
-                  type="button"
-                  onClick={handleAddProject}
-                  className="rounded-xs p-0.5 text-tertiary-label transition-colors hover:text-secondary-label"
-                  aria-label="Add project"
-                >
-                  <FolderPlusIcon size={14} />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={handleFilterClick}
+                    className="rounded-xs p-0.5 text-tertiary-label transition-colors hover:text-secondary-label"
+                    aria-label="Filter projects"
+                  >
+                    <FunnelIcon
+                      size={14}
+                      weight={sidebarFilter !== "active" ? "fill" : "regular"}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddProject}
+                    className="rounded-xs p-0.5 text-tertiary-label transition-colors hover:text-secondary-label"
+                    aria-label="Add project"
+                  >
+                    <FolderPlusIcon size={14} />
+                  </button>
+                </div>
               </div>
             </SidebarFixedItem>
             <SidebarContent>

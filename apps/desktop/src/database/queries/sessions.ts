@@ -20,6 +20,13 @@ export function createSession(session: InsertSession): { success: boolean } {
   }
 }
 
+export function updateSession(
+  id: string,
+  data: Partial<Pick<InsertSession, "title" | "pinnedAt" | "archivedAt">>,
+): void {
+  getDb().update(sessions).set(data).where(eq(sessions.id, id)).run();
+}
+
 export function deleteSession(id: string): void {
   getDb().delete(sessions).where(eq(sessions.id, id)).run();
 }

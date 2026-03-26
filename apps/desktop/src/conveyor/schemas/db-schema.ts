@@ -4,6 +4,8 @@ const projectSchema = z.object({
   id: z.string(),
   name: z.string(),
   path: z.string(),
+  pinnedAt: z.string().nullable(),
+  archivedAt: z.string().nullable(),
   createdAt: z.string(),
 });
 
@@ -11,6 +13,8 @@ const sessionSchema = z.object({
   id: z.string(),
   projectId: z.string(),
   title: z.string(),
+  pinnedAt: z.string().nullable(),
+  archivedAt: z.string().nullable(),
   createdAt: z.string(),
 });
 
@@ -39,8 +43,30 @@ export const dbSchemas = {
     args: sessionSchema,
     return: z.object({ success: z.boolean() }),
   },
+  "db:update-session": {
+    args: z.object({
+      id: z.string(),
+      data: z.object({
+        title: z.string().optional(),
+        pinnedAt: z.string().nullable().optional(),
+        archivedAt: z.string().nullable().optional(),
+      }),
+    }),
+    return: z.void(),
+  },
   "db:delete-session": {
     args: z.object({ id: z.string() }),
+    return: z.void(),
+  },
+  "db:update-project": {
+    args: z.object({
+      id: z.string(),
+      data: z.object({
+        name: z.string().optional(),
+        pinnedAt: z.string().nullable().optional(),
+        archivedAt: z.string().nullable().optional(),
+      }),
+    }),
     return: z.void(),
   },
   "db:get-setting": {

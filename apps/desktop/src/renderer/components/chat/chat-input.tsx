@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from "react";
-import { PlusIcon, ArrowUpIcon, ArrowFatDownIcon } from "@phosphor-icons/react";
+import { ArrowUpIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
-import { Separator } from "react-resizable-panels";
 
 const MODELS = [
   { label: "Opus", value: "opus-4" },
@@ -77,7 +76,6 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
 
           <div className="mt-3 flex items-center justify-between">
             <div className="flex items-center px-0.5">
-
               <InlineSelect value={model} onChange={setModel} label="Model">
                 {MODELS.map((m) => (
                   <option key={m.value} value={m.value}>

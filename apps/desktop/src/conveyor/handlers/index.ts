@@ -4,6 +4,7 @@ import { registerDialogHandlers } from "./dialog-handler";
 import { registerWindowHandlers } from "./window-handler";
 import { registerWebContentHandlers } from "./webcontent-handler";
 import { registerDbHandlers } from "./db-handler";
+import { registerContextMenuHandlers } from "./context-menu-handler";
 
 export function registerAllHandlers(win: BrowserWindow, app: App): void {
   registerAppHandlers(app);
@@ -11,4 +12,5 @@ export function registerAllHandlers(win: BrowserWindow, app: App): void {
   registerWindowHandlers(win);
   registerWebContentHandlers(win);
   registerDbHandlers();
+  registerContextMenuHandlers(win);
 }

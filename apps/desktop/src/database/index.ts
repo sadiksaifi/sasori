@@ -13,13 +13,14 @@ export type {
 export { initDatabase, closeDatabase } from "./connection";
 
 // Queries — projects
-export { getAllProjects, addProject, removeProject } from "./queries/projects";
+export { getAllProjects, addProject, updateProject, removeProject } from "./queries/projects";
 
 // Queries — sessions
 export {
   getAllSessions,
   getProjectSessions,
   createSession,
+  updateSession,
   deleteSession,
 } from "./queries/sessions";
 

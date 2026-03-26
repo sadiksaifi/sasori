@@ -16,6 +16,13 @@ export function addProject(project: InsertProject): { success: boolean } {
   }
 }
 
+export function updateProject(
+  id: string,
+  data: Partial<Pick<InsertProject, "name" | "pinnedAt" | "archivedAt">>,
+): void {
+  getDb().update(projects).set(data).where(eq(projects.id, id)).run();
+}
+
 export function removeProject(id: string): void {
   getDb().delete(projects).where(eq(projects.id, id)).run();
 }

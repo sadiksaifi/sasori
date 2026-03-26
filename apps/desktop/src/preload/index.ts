@@ -14,19 +14,48 @@ const conveyor = {
   },
   db: {
     getAllProjects: () => invoke("db:get-all-projects"),
-    addProject: (args: { id: string; name: string; path: string; createdAt: string }) =>
-      invoke("db:add-project", args),
+    addProject: (args: {
+      id: string;
+      name: string;
+      path: string;
+      pinnedAt: string | null;
+      archivedAt: string | null;
+      createdAt: string;
+    }) => invoke("db:add-project", args),
     removeProject: (args: { id: string }) => invoke("db:remove-project", args),
     getAllSessions: () => invoke("db:get-all-sessions"),
     getProjectSessions: (args: { projectId: string }) => invoke("db:get-project-sessions", args),
-    createSession: (args: { id: string; projectId: string; title: string; createdAt: string }) =>
-      invoke("db:create-session", args),
+    createSession: (args: {
+      id: string;
+      projectId: string;
+      title: string;
+      pinnedAt: string | null;
+      archivedAt: string | null;
+      createdAt: string;
+    }) => invoke("db:create-session", args),
+    updateSession: (args: {
+      id: string;
+      data: { title?: string; pinnedAt?: string | null; archivedAt?: string | null };
+    }) => invoke("db:update-session", args),
     deleteSession: (args: { id: string }) => invoke("db:delete-session", args),
+    updateProject: (args: {
+      id: string;
+      data: { name?: string; pinnedAt?: string | null; archivedAt?: string | null };
+    }) => invoke("db:update-project", args),
     getSetting: (args: { key: string }) => invoke("db:get-setting", args),
     setSetting: (args: { key: string; value: string }) => invoke("db:set-setting", args),
   },
+  contextMenu: {
+    show: (args: ChannelArgs<"context-menu:show">) => invoke("context-menu:show", args),
+  },
   dialog: {
     openDirectory: () => invoke("dialog:open-directory"),
+    confirm: (args: {
+      message: string;
+      detail?: string;
+      confirmLabel?: string;
+      cancelLabel?: string;
+    }) => invoke("dialog:confirm", args),
   },
   window: {
     init: () => invoke("window:init"),

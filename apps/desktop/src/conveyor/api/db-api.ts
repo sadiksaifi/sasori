@@ -32,10 +32,22 @@ export class DbApi extends ConveyorApi {
     return this.invoke("db:create-session", args);
   }
 
+  updateSession(
+    args: ChannelArgs<"db:update-session">,
+  ): Promise<ChannelReturn<"db:update-session">> {
+    return this.invoke("db:update-session", args);
+  }
+
   deleteSession(
     args: ChannelArgs<"db:delete-session">,
   ): Promise<ChannelReturn<"db:delete-session">> {
     return this.invoke("db:delete-session", args);
+  }
+
+  updateProject(
+    args: ChannelArgs<"db:update-project">,
+  ): Promise<ChannelReturn<"db:update-project">> {
+    return this.invoke("db:update-project", args);
   }
 
   getSetting(args: ChannelArgs<"db:get-setting">): Promise<ChannelReturn<"db:get-setting">> {
