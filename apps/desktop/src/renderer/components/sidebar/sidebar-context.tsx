@@ -39,6 +39,7 @@ interface SidebarProviderProps {
 }
 
 export const PANEL_SLIDE_MS = 200;
+export const TRAFFIC_LIGHT_ZONE = 78;
 
 export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -78,7 +79,7 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
         setTransitionIcon({
           x: sourceRect.left,
           y: sourceRect.top,
-          targetX: 78,
+          targetX: TRAFFIC_LIGHT_ZONE,
           targetY: sourceRect.top,
           animating: false,
         });

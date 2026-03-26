@@ -1,7 +1,7 @@
 import { render, screen, cleanup, act, fireEvent } from "@testing-library/react";
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import { Toolbar } from "./toolbar";
-import { SidebarProvider } from "./sidebar/sidebar-context";
+import { SidebarProvider, TRAFFIC_LIGHT_ZONE } from "./sidebar/sidebar-context";
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -37,7 +37,7 @@ describe("Toolbar", () => {
   it("adds traffic-light padding when sidebar is collapsed", () => {
     renderToolbar({ defaultOpen: false });
     const toolbar = screen.getByRole("banner");
-    expect(toolbar.className).toContain("pl-[78px]");
+    expect(toolbar.className).toContain(`pl-[${TRAFFIC_LIGHT_ZONE}px]`);
   });
 
   it("shows toggle button only when sidebar is collapsed", () => {

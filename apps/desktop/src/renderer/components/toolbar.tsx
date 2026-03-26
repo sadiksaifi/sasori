@@ -1,6 +1,6 @@
 import { Sidebar, PaperPlaneTilt, ArrowSquareOut } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
-import { useSidebar } from "./sidebar/sidebar-context";
+import { useSidebar, TRAFFIC_LIGHT_ZONE } from "./sidebar/sidebar-context";
 
 export function Toolbar() {
   const { isOpen, toolbarInset, toggleSidebar, toolbarToggleRef } = useSidebar();
@@ -10,7 +10,7 @@ export function Toolbar() {
       role="banner"
       className={cn(
         "flex h-toolbar shrink-0 items-center justify-between px-3 drag-region transition-[padding-left] duration-200 ease-in-out",
-        toolbarInset && "pl-[78px]",
+        toolbarInset && `pl-[${TRAFFIC_LIGHT_ZONE}px]`,
       )}
     >
       {/* Left */}
