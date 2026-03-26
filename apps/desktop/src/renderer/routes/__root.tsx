@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { Link, useMatchRoute } from "@tanstack/react-router";
 import {
   House,
   MagnifyingGlass,
@@ -7,7 +6,6 @@ import {
   FolderSimple,
   GearSix,
   SidebarSimple,
-  type Icon,
 } from "@phosphor-icons/react";
 import {
   SidebarProvider,
@@ -18,6 +16,8 @@ import {
   SidebarFixedItem,
   SidebarContent,
   SidebarFooter,
+  SidebarLink,
+  type NavItem,
 } from "@/components/sidebar";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Toolbar } from "@/components/toolbar";
@@ -27,12 +27,6 @@ import { cn } from "@/lib/utils";
 export const Route = createRootRoute({
   component: RootLayout,
 });
-
-interface NavItem {
-  to: string;
-  label: string;
-  icon: Icon;
-}
 
 const topNavItems: NavItem[] = [
   { to: "/", label: "Home", icon: House },
@@ -151,26 +145,5 @@ function RootLayoutInner() {
         </div>
       )}
     </div>
-  );
-}
-
-function SidebarLink({ item }: { item: NavItem }) {
-  const matchRoute = useMatchRoute();
-  const isActive = !!matchRoute({ to: item.to, fuzzy: item.to !== "/" });
-  const IconComponent = item.icon;
-
-  return (
-    <Link
-      to={item.to}
-      className={cn(
-        "flex h-sidebar-item items-center gap-item rounded-sm px-sidebar-item-x text-body transition-colors duration-75",
-        isActive
-          ? "bg-sidebar-selected font-medium text-label"
-          : "text-secondary-label hover:bg-sidebar-hover",
-      )}
-    >
-      <IconComponent size={16} weight="regular" />
-      {item.label}
-    </Link>
   );
 }
