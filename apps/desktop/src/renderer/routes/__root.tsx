@@ -27,8 +27,9 @@ import { useElectronEvents } from "@/hooks/use-electron-events";
 import { useNewSession } from "@/hooks/use-new-session";
 import { useConveyor } from "@/hooks/use-conveyor";
 import { useProjectStore } from "@/stores/project-store";
+import { useProfileStore } from "@/stores/profile-store";
 import { cn } from "@/lib/utils";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -58,6 +59,11 @@ function RootLayoutInner() {
     sidebarToggleRef,
   } = useSidebar();
 
+  useEffect(() => {
+    useProjectStore.getState().hydrate();
+    useProfileStore.getState().hydrate();
+  }, []);
+
   const handleNewSession = useNewSession();
   const dialog = useConveyor("dialog");
   const addProject = useProjectStore((s) => s.addProject);
@@ -65,7 +71,7 @@ function RootLayoutInner() {
   const handleAddProject = useCallback(async () => {
     const { path } = await dialog.openDirectory();
     if (!path) return;
-    addProject(path);
+    await addProject(path);
   }, [dialog, addProject]);
 
   return (

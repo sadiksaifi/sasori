@@ -3,12 +3,14 @@ import { appSchemas } from "./app-schema";
 import { dialogSchemas } from "./dialog-schema";
 import { windowSchemas } from "./window-schema";
 import { webcontentSchemas } from "./webcontent-schema";
+import { dbSchemas } from "./db-schema";
 
 export const ipcSchemas = {
   ...appSchemas,
   ...dialogSchemas,
   ...windowSchemas,
   ...webcontentSchemas,
+  ...dbSchemas,
 } as const;
 
 // --- Type utilities ---

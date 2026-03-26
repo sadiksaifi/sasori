@@ -11,6 +11,10 @@ files:
   - out/**/*
   - "!out/**/*.map"
 
+extraResources:
+  - from: src/database/migrations
+    to: migrations
+
 mac:
   category: public.app-category.developer-tools
   target:

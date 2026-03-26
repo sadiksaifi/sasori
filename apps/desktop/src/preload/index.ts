@@ -12,6 +12,19 @@ const conveyor = {
   app: {
     version: () => invoke("app:version"),
   },
+  db: {
+    getAllProjects: () => invoke("db:get-all-projects"),
+    addProject: (args: { id: string; name: string; path: string; createdAt: string }) =>
+      invoke("db:add-project", args),
+    removeProject: (args: { id: string }) => invoke("db:remove-project", args),
+    getAllSessions: () => invoke("db:get-all-sessions"),
+    getProjectSessions: (args: { projectId: string }) => invoke("db:get-project-sessions", args),
+    createSession: (args: { id: string; projectId: string; title: string; createdAt: string }) =>
+      invoke("db:create-session", args),
+    deleteSession: (args: { id: string }) => invoke("db:delete-session", args),
+    getSetting: (args: { key: string }) => invoke("db:get-setting", args),
+    setSetting: (args: { key: string; value: string }) => invoke("db:set-setting", args),
+  },
   dialog: {
     openDirectory: () => invoke("dialog:open-directory"),
   },

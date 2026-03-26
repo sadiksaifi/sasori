@@ -24,12 +24,12 @@ export function useNewSession() {
     if (!projectId) {
       const { path } = await dialog.openDirectory();
       if (!path) return;
-      const project = addProject(path);
+      const project = await addProject(path);
       if (!project) return;
       projectId = project.id;
     }
 
-    const session = createSession(projectId);
+    const session = await createSession(projectId);
     setActiveSession(projectId, session.id);
     expandProject(projectId);
     navigate({

@@ -34,9 +34,9 @@ export function ProjectItem({ project, sessions, isExpanded, isActive }: Project
   }, [hasSessions, toggleProjectExpanded, setActiveProject, project.id]);
 
   const handleNewSession = useCallback(
-    (e: React.MouseEvent) => {
+    async (e: React.MouseEvent) => {
       e.stopPropagation();
-      const session = createSession(project.id);
+      const session = await createSession(project.id);
       setActiveSession(project.id, session.id);
       expandProject(project.id);
       navigate({

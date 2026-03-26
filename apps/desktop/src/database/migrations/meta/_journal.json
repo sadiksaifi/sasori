@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1774514275290,
+      "tag": "0000_bright_microbe",
+      "breakpoints": true
+    }
+  ]
+}

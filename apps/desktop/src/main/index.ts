@@ -1,6 +1,7 @@
 import { app, BrowserWindow, session } from "electron";
 import { join } from "node:path";
 import { registerAllHandlers } from "../conveyor/handlers";
+import { closeDatabase, initDatabase } from "../database";
 import { createApplicationMenu } from "./menu";
 
 const ALLOWED_WEBVIEW_ORIGIN = "https://skills.sh";
@@ -56,6 +57,8 @@ function createWindow(): BrowserWindow {
 }
 
 app.whenReady().then(() => {
+  initDatabase();
+
   app.setAboutPanelOptions({
     applicationName: "Sasori",
     applicationVersion: app.getVersion(),
@@ -77,4 +80,8 @@ app.whenReady().then(() => {
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+app.on("quit", () => {
+  closeDatabase();
 });
