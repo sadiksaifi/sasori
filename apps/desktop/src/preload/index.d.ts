@@ -4,7 +4,7 @@ declare global {
   interface Window {
     conveyor: Conveyor;
     electron: {
-      onNavigate: (callback: (path: string) => void) => void;
+      onNavigate: (callback: (path: string) => void) => () => void;
       onToggleSidebar: (callback: () => void) => () => void;
     };
     __ELECTRON_PLATFORM__: NodeJS.Platform;

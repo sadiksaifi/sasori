@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import type { PanelImperativeHandle } from "react-resizable-panels";
 
 interface TransitionIconState {
@@ -30,7 +38,7 @@ interface SidebarProviderProps {
   defaultOpen?: boolean;
 }
 
-const PANEL_SLIDE_MS = 200;
+export const PANEL_SLIDE_MS = 200;
 
 export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -128,24 +136,23 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
     }
   }, []);
 
-  return (
-    <SidebarContext.Provider
-      value={{
-        isOpen,
-        toolbarInset,
-        sidebarIconHidden,
-        transitionIcon,
-        toggleSidebar,
-        panelRef,
-        panelElementRef,
-        sidebarToggleRef,
-        toolbarToggleRef,
-        setIsOpen,
-      }}
-    >
-      {children}
-    </SidebarContext.Provider>
+  const value = useMemo(
+    () => ({
+      isOpen,
+      toolbarInset,
+      sidebarIconHidden,
+      transitionIcon,
+      toggleSidebar,
+      panelRef,
+      panelElementRef,
+      sidebarToggleRef,
+      toolbarToggleRef,
+      setIsOpen,
+    }),
+    [isOpen, toolbarInset, sidebarIconHidden, transitionIcon, toggleSidebar, setIsOpen],
   );
+
+  return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
 }
 
 export function useSidebar(): SidebarContextValue {

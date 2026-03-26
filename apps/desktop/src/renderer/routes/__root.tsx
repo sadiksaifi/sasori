@@ -12,6 +12,7 @@ import {
 import {
   SidebarProvider,
   useSidebar,
+  PANEL_SLIDE_MS,
   Sidebar,
   SidebarHeader,
   SidebarFixedItem,
@@ -142,7 +143,7 @@ function RootLayoutInner() {
             left: transitionIcon.animating ? transitionIcon.targetX : transitionIcon.x,
             top: transitionIcon.animating ? transitionIcon.targetY : transitionIcon.y,
             transition: transitionIcon.animating
-              ? `left ${200}ms ease-in-out, top ${200}ms ease-in-out`
+              ? `left ${PANEL_SLIDE_MS}ms ease-in-out, top ${PANEL_SLIDE_MS}ms ease-in-out`
               : "none",
           }}
         >

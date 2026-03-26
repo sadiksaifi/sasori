@@ -7,7 +7,7 @@ export function useElectronEvents(): void {
   const { toggleSidebar } = useSidebar();
 
   useEffect(() => {
-    window.electron.onNavigate((path) => {
+    return window.electron.onNavigate((path) => {
       router.navigate({ to: path });
     });
   }, [router]);
