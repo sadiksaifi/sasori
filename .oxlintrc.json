@@ -1,7 +1,47 @@
 {
-  "plugins": ["typescript"],
+  "plugins": ["typescript", "unicorn", "import", "promise"],
   "rules": {
-    "typescript/no-explicit-any": "warn"
+    // TypeScript
+    "typescript/no-explicit-any": "warn",
+    "typescript/consistent-type-imports": "warn",
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/no-empty-object-type": "warn",
+    "typescript/consistent-type-definitions": "warn",
+    "typescript/array-type": "warn",
+    "typescript/no-deprecated": "error",
+
+    // Unused & dead code
+    "no-unused-vars": "error",
+    "no-unused-expressions": "error",
+    "no-unused-labels": "error",
+    "no-unused-private-class-members": "error",
+
+    // Import hygiene
+    "import/no-duplicates": "warn",
+    "import/no-self-import": "error",
+    "import/no-cycle": "warn",
+    "import/default": "warn",
+    "import/namespace": "warn",
+
+    // Unicorn best practices
+    "unicorn/no-nested-ternary": "warn",
+    "unicorn/prefer-optional-catch-binding": "warn",
+    "unicorn/throw-new-error": "warn",
+    "unicorn/catch-error-name": "warn",
+    "unicorn/no-zero-fractions": "warn",
+    "unicorn/number-literal-case": "warn",
+
+    // Promise safety
+    "promise/no-new-statics": "error",
+    "promise/valid-params": "error",
+
+    // General
+    "no-var": "error",
+    "prefer-const": "warn",
+    "no-console": "warn",
+    "no-alert": "error",
+    "eqeqeq": "warn",
+    "no-await-in-loop": "warn"
   },
   "ignorePatterns": ["dist", "out", "node_modules", "*.gen.ts", ".turbo"]
 }

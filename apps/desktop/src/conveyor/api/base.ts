@@ -1,8 +1,8 @@
 import type { ChannelName, ChannelArgs, ChannelReturn } from "../schemas";
 
-export type ElectronAPI = {
+export interface ElectronAPI {
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
-};
+}
 
 export class ConveyorApi {
   constructor(protected electronAPI: ElectronAPI) {}
