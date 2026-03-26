@@ -26,6 +26,8 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
   const panelRef = useRef<PanelImperativeHandle | null>(null);
   const panelElementRef = useRef<HTMLDivElement | null>(null);
   const animatingRef = useRef(false);
+  const isOpenRef = useRef(isOpen);
+  isOpenRef.current = isOpen;
 
   const toggleSidebar = useCallback(() => {
     if (animatingRef.current) return;
@@ -33,8 +35,9 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
 
     const panel = panelRef.current;
     const el = panelElementRef.current;
+    const open = isOpenRef.current;
 
-    if (isOpen) {
+    if (open) {
       // CLOSING: icon fades out first → then panel collapses
       setSidebarIconHidden(true);
       setTimeout(() => {
@@ -62,7 +65,7 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
         animatingRef.current = false;
       }, PANEL_SLIDE_MS + 50);
     }
-  }, [isOpen]);
+  }, []);
 
   return (
     <SidebarContext.Provider

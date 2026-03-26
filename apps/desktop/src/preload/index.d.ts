@@ -5,7 +5,7 @@ declare global {
     conveyor: Conveyor;
     electron: {
       onNavigate: (callback: (path: string) => void) => void;
-      onToggleSidebar: (callback: () => void) => void;
+      onToggleSidebar: (callback: () => void) => () => void;
     };
     __ELECTRON_PLATFORM__: NodeJS.Platform;
   }

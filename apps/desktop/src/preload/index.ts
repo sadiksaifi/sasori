@@ -44,7 +44,11 @@ const electron = {
     ipcRenderer.on("navigate", (_event, path: string) => callback(path));
   },
   onToggleSidebar: (callback: () => void) => {
-    ipcRenderer.on("toggle-sidebar", () => callback());
+    const handler = () => callback();
+    ipcRenderer.on("toggle-sidebar", handler);
+    return () => {
+      ipcRenderer.removeListener("toggle-sidebar", handler);
+    };
   },
 };
 

@@ -10,9 +10,12 @@ export function useElectronEvents(): void {
     window.electron.onNavigate((path) => {
       router.navigate({ to: path });
     });
+  }, [router]);
 
-    window.electron.onToggleSidebar(() => {
+  useEffect(() => {
+    const cleanup = window.electron.onToggleSidebar(() => {
       toggleSidebar();
     });
-  }, [router, toggleSidebar]);
+    return cleanup;
+  }, [toggleSidebar]);
 }
