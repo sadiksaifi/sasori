@@ -11,6 +11,8 @@ interface TransitionIconState {
 
 interface SidebarContextValue {
   isOpen: boolean;
+  /** Whether toolbar should have traffic-light inset padding */
+  toolbarInset: boolean;
   sidebarIconHidden: boolean;
   transitionIcon: TransitionIconState | null;
   toggleSidebar: () => void;
@@ -32,6 +34,7 @@ const PANEL_SLIDE_MS = 200;
 
 export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [toolbarInset, setToolbarInset] = useState(!defaultOpen);
   const [sidebarIconHidden, setSidebarIconHidden] = useState(false);
   const [transitionIcon, setTransitionIcon] = useState<TransitionIconState | null>(null);
   const panelRef = useRef<PanelImperativeHandle | null>(null);
@@ -52,14 +55,15 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
     const open = isOpenRef.current;
 
     if (open) {
-      // CLOSING: hide real icon, show floating clone, collapse panel simultaneously
-      // Store current width before collapsing so we know where to animate back to
+      // CLOSING
       const currentSize = panel?.getSize();
       if (currentSize && currentSize.inPixels > 0) {
         lastWidthRef.current = currentSize.inPixels;
       }
 
       setSidebarIconHidden(true);
+      // Apply toolbar inset padding NOW so it transitions with the panel slide
+      setToolbarInset(true);
 
       const sourceRect = sidebarToggleRef.current?.getBoundingClientRect();
       if (sourceRect) {
@@ -87,11 +91,12 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
         animatingRef.current = false;
       }, PANEL_SLIDE_MS + 50);
     } else {
-      // OPENING: hide toolbar icon, show floating clone, expand panel simultaneously
+      // OPENING
       setSidebarIconHidden(true);
+      // Remove toolbar inset padding NOW so it transitions with the panel slide
+      setToolbarInset(false);
 
       const sourceRect = toolbarToggleRef.current?.getBoundingClientRect();
-      // Target: button is at justify-end px-2 inside the sidebar
       const targetX = lastWidthRef.current - 8 - 28;
 
       if (sourceRect) {
@@ -104,7 +109,6 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
         });
       }
 
-      // Don't setIsOpen(true) yet — keep pl-[78px] on toolbar during animation
       if (el) el.style.transition = `flex ${PANEL_SLIDE_MS}ms ease-in-out`;
       if (panel) panel.expand();
 
@@ -128,6 +132,7 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
     <SidebarContext.Provider
       value={{
         isOpen,
+        toolbarInset,
         sidebarIconHidden,
         transitionIcon,
         toggleSidebar,

@@ -3,14 +3,14 @@ import { cn } from "@/lib/utils";
 import { useSidebar } from "./sidebar/sidebar-context";
 
 export function Toolbar() {
-  const { isOpen, toggleSidebar, toolbarToggleRef } = useSidebar();
+  const { isOpen, toolbarInset, toggleSidebar, toolbarToggleRef } = useSidebar();
 
   return (
     <header
       role="banner"
       className={cn(
         "flex h-toolbar shrink-0 items-center justify-between px-3 drag-region transition-[padding-left] duration-200 ease-in-out",
-        !isOpen && "pl-[78px]",
+        toolbarInset && "pl-[78px]",
       )}
     >
       {/* Left */}

@@ -52,20 +52,19 @@ describe("Toolbar", () => {
     expect(toggleBtn.className).toContain("no-drag");
   });
 
-  it("clicking toggle button opens sidebar and removes padding", () => {
+  it("clicking toggle starts padding transition immediately", () => {
     renderToolbar({ defaultOpen: false });
 
     const toggleBtn = screen.getByRole("button", { name: /toggle sidebar/i });
     fireEvent.click(toggleBtn);
 
-    // isOpen stays false during animation — padding stays
+    // toolbarInset removed immediately on open — padding starts transitioning
     const toolbar = screen.getByRole("banner");
-    expect(toolbar.className).toContain("pl-[78px]");
+    expect(toolbar.className).not.toContain("pl-[78px]");
 
-    // After animation completes, padding removed
+    // After animation completes
     act(() => {
       vi.advanceTimersByTime(350);
     });
-    expect(toolbar.className).not.toContain("pl-[78px]");
   });
 });
