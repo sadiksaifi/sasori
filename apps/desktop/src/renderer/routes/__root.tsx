@@ -1,7 +1,15 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Link, useMatchRoute } from "@tanstack/react-router";
-import { House, GearSix, SidebarSimple, type Icon } from "@phosphor-icons/react";
+import {
+  House,
+  MagnifyingGlass,
+  Sparkle,
+  FolderSimple,
+  GearSix,
+  SidebarSimple,
+  type Icon,
+} from "@phosphor-icons/react";
 import {
   SidebarProvider,
   useSidebar,
@@ -27,10 +35,16 @@ interface NavItem {
   icon: Icon;
 }
 
-const navItems: NavItem[] = [
+const topNavItems: NavItem[] = [
   { to: "/", label: "Home", icon: House },
-  { to: "/settings", label: "Settings", icon: GearSix },
+  { to: "/search", label: "Search", icon: MagnifyingGlass },
+  { to: "/skills", label: "Skills", icon: Sparkle },
 ];
+
+const threadItems = Array.from({ length: 18 }, (_, i) => ({
+  id: `thread-${i + 1}`,
+  label: `Thread ${i + 1}`,
+}));
 
 function RootLayout() {
   return (
@@ -42,7 +56,7 @@ function RootLayout() {
 
 function RootLayoutInner() {
   useElectronEvents();
-  const { isOpen, toggleSidebar, panelRef, setIsOpen } = useSidebar();
+  const { isOpen, toggleSidebar, panelRef, panelElementRef, setIsOpen } = useSidebar();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -50,6 +64,7 @@ function RootLayoutInner() {
         <ResizablePanel
           id="sidebar"
           panelRef={panelRef}
+          elementRef={panelElementRef}
           defaultSize="240px"
           minSize="180px"
           maxSize="360px"
@@ -73,15 +88,34 @@ function RootLayoutInner() {
                   <SidebarSimple size={16} />
                 </button>
               </div>
+              <nav className="flex flex-col gap-related px-sidebar-section-x pb-2">
+                {topNavItems.map((item) => (
+                  <SidebarLink key={item.to} item={item} />
+                ))}
+              </nav>
             </SidebarHeader>
             <SidebarFixedItem>
-              <div className="px-sidebar-section-x" />
+              <div className="px-sidebar-section-x py-1">
+                <span className="text-subheadline font-medium text-secondary-label">Threads</span>
+              </div>
             </SidebarFixedItem>
             <SidebarContent>
-              <SidebarNav />
+              <div className="flex flex-col gap-related px-sidebar-section-x py-1">
+                {threadItems.map((thread) => (
+                  <div
+                    key={thread.id}
+                    className="flex h-sidebar-item items-center gap-item rounded-sm px-sidebar-item-x text-body text-secondary-label transition-colors duration-75 hover:bg-sidebar-hover"
+                  >
+                    <FolderSimple size={16} />
+                    {thread.label}
+                  </div>
+                ))}
+              </div>
             </SidebarContent>
             <SidebarFooter>
-              <div className="px-sidebar-section-x py-2" />
+              <div className="border-t border-separator px-sidebar-section-x py-2">
+                <SidebarLink item={{ to: "/settings", label: "Settings", icon: GearSix }} />
+              </div>
             </SidebarFooter>
           </Sidebar>
         </ResizablePanel>
@@ -100,30 +134,23 @@ function RootLayoutInner() {
   );
 }
 
-function SidebarNav() {
+function SidebarLink({ item }: { item: NavItem }) {
   const matchRoute = useMatchRoute();
+  const isActive = !!matchRoute({ to: item.to, fuzzy: item.to !== "/" });
+  const IconComponent = item.icon;
 
   return (
-    <nav className="flex flex-col gap-related px-sidebar-section-x">
-      {navItems.map((item) => {
-        const isActive = !!matchRoute({ to: item.to, fuzzy: item.to !== "/" });
-        const IconComponent = item.icon;
-        return (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={cn(
-              "flex h-sidebar-item items-center gap-item rounded-sm px-sidebar-item-x text-body transition-colors duration-75",
-              isActive
-                ? "bg-sidebar-selected font-medium text-label"
-                : "text-secondary-label hover:bg-sidebar-hover",
-            )}
-          >
-            <IconComponent size={16} weight={isActive ? "fill" : "regular"} />
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
+    <Link
+      to={item.to}
+      className={cn(
+        "flex h-sidebar-item items-center gap-item rounded-sm px-sidebar-item-x text-body transition-colors duration-75",
+        isActive
+          ? "bg-sidebar-selected font-medium text-label"
+          : "text-secondary-label hover:bg-sidebar-hover",
+      )}
+    >
+      <IconComponent size={16} weight="regular" />
+      {item.label}
+    </Link>
   );
 }

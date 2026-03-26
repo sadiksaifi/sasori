@@ -5,6 +5,7 @@ interface SidebarContextValue {
   isOpen: boolean;
   toggleSidebar: () => void;
   panelRef: React.RefObject<PanelImperativeHandle | null>;
+  panelElementRef: React.RefObject<HTMLDivElement | null>;
   setIsOpen: (open: boolean) => void;
 }
 
@@ -15,12 +16,25 @@ interface SidebarProviderProps {
   defaultOpen?: boolean;
 }
 
+const TRANSITION_DURATION = 150;
+
 export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const panelRef = useRef<PanelImperativeHandle | null>(null);
+  const panelElementRef = useRef<HTMLDivElement | null>(null);
 
   const toggleSidebar = useCallback(() => {
     const panel = panelRef.current;
+    const el = panelElementRef.current;
+
+    // Add transition for smooth animation during programmatic toggle
+    if (el) {
+      el.style.transition = `flex ${TRANSITION_DURATION}ms ease-out`;
+      setTimeout(() => {
+        el.style.transition = "";
+      }, TRANSITION_DURATION + 50);
+    }
+
     if (panel) {
       if (isOpen) {
         panel.collapse();
@@ -32,7 +46,9 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
   }, [isOpen]);
 
   return (
-    <SidebarContext.Provider value={{ isOpen, toggleSidebar, panelRef, setIsOpen }}>
+    <SidebarContext.Provider
+      value={{ isOpen, toggleSidebar, panelRef, panelElementRef, setIsOpen }}
+    >
       {children}
     </SidebarContext.Provider>
   );

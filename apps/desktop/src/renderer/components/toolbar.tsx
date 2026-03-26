@@ -1,4 +1,4 @@
-import { SidebarSimple } from "@phosphor-icons/react";
+import { Sidebar } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "./sidebar/sidebar-context";
 
@@ -17,7 +17,7 @@ export function Toolbar() {
           onClick={toggleSidebar}
           className="no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-colors hover:bg-sidebar-hover"
         >
-          <SidebarSimple size={16} />
+          <Sidebar size={16} />
         </button>
       )}
     </header>
