@@ -22,7 +22,6 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Toolbar } from "@/components/toolbar";
 import { useElectronEvents } from "@/hooks/use-electron-events";
 import { cn } from "@/lib/utils";
-import { isDev } from "@repo/shared/env";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -64,8 +63,8 @@ function RootLayoutInner() {
           id="sidebar"
           panelRef={panelRef}
           elementRef={panelElementRef}
-          defaultSize="240px"
-          minSize="210px"
+          defaultSize="280px"
+          minSize="250px"
           maxSize="360px"
           collapsible
           collapsedSize={0}
