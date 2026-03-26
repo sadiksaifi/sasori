@@ -19,7 +19,7 @@ describe("SidebarProvider", () => {
     expect(result.current.isOpen).toBe(true);
   });
 
-  it("toggleSidebar flips isOpen to false after panel slide", () => {
+  it("toggleSidebar fades icon then collapses panel", () => {
     const { result } = renderHook(() => useSidebar(), {
       wrapper: SidebarProvider,
     });
@@ -28,11 +28,13 @@ describe("SidebarProvider", () => {
       result.current.toggleSidebar();
     });
 
-    // isOpen stays true until panel slide completes
+    // Icon fades first, panel hasn't collapsed yet
+    expect(result.current.sidebarIconHidden).toBe(true);
     expect(result.current.isOpen).toBe(true);
 
+    // After full animation
     act(() => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(400);
     });
 
     expect(result.current.isOpen).toBe(false);
@@ -48,21 +50,21 @@ describe("SidebarProvider", () => {
       result.current.toggleSidebar();
     });
     act(() => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(400);
     });
     expect(result.current.isOpen).toBe(false);
 
-    // Open
+    // Open — isOpen true immediately, icon hidden until panel expands
     act(() => {
       result.current.toggleSidebar();
     });
-
-    // isOpen becomes true immediately on open
     expect(result.current.isOpen).toBe(true);
+    expect(result.current.sidebarIconHidden).toBe(true);
 
     act(() => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(400);
     });
+    expect(result.current.sidebarIconHidden).toBe(false);
   });
 
   it("throws when useSidebar is used outside SidebarProvider", () => {
