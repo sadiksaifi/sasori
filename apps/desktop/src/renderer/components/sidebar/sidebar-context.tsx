@@ -3,6 +3,7 @@ import type { PanelImperativeHandle } from "react-resizable-panels";
 
 interface SidebarContextValue {
   isOpen: boolean;
+  sidebarIconHidden: boolean;
   toggleSidebar: () => void;
   panelRef: React.RefObject<PanelImperativeHandle | null>;
   panelElementRef: React.RefObject<HTMLDivElement | null>;
@@ -16,38 +17,56 @@ interface SidebarProviderProps {
   defaultOpen?: boolean;
 }
 
-const TRANSITION_DURATION = 150;
+const ICON_FADE_MS = 100;
+const PANEL_SLIDE_MS = 150;
 
 export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [sidebarIconHidden, setSidebarIconHidden] = useState(false);
   const panelRef = useRef<PanelImperativeHandle | null>(null);
   const panelElementRef = useRef<HTMLDivElement | null>(null);
+  const animatingRef = useRef(false);
 
   const toggleSidebar = useCallback(() => {
+    if (animatingRef.current) return;
+    animatingRef.current = true;
+
     const panel = panelRef.current;
     const el = panelElementRef.current;
 
-    // Add transition for smooth animation during programmatic toggle
-    if (el) {
-      el.style.transition = `flex ${TRANSITION_DURATION}ms ease-out`;
+    if (isOpen) {
+      // CLOSING: icon fades out first → then panel collapses
+      setSidebarIconHidden(true);
       setTimeout(() => {
-        el.style.transition = "";
-      }, TRANSITION_DURATION + 50);
-    }
-
-    if (panel) {
-      if (isOpen) {
-        panel.collapse();
-      } else {
-        panel.expand();
+        if (el) {
+          el.style.transition = `flex ${PANEL_SLIDE_MS}ms ease-out`;
+        }
+        if (panel) panel.collapse();
+        setTimeout(() => {
+          if (el) el.style.transition = "";
+          setIsOpen(false);
+          animatingRef.current = false;
+        }, PANEL_SLIDE_MS + 50);
+      }, ICON_FADE_MS);
+    } else {
+      // OPENING: panel expands first → then icon fades in
+      setSidebarIconHidden(true);
+      setIsOpen(true);
+      if (el) {
+        el.style.transition = `flex ${PANEL_SLIDE_MS}ms ease-out`;
       }
+      if (panel) panel.expand();
+      setTimeout(() => {
+        if (el) el.style.transition = "";
+        setSidebarIconHidden(false);
+        animatingRef.current = false;
+      }, PANEL_SLIDE_MS + 50);
     }
-    setIsOpen((prev) => !prev);
   }, [isOpen]);
 
   return (
     <SidebarContext.Provider
-      value={{ isOpen, toggleSidebar, panelRef, panelElementRef, setIsOpen }}
+      value={{ isOpen, sidebarIconHidden, toggleSidebar, panelRef, panelElementRef, setIsOpen }}
     >
       {children}
     </SidebarContext.Provider>

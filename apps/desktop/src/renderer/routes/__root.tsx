@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import {
   House,
@@ -56,7 +55,7 @@ function RootLayout() {
 
 function RootLayoutInner() {
   useElectronEvents();
-  const { isOpen, toggleSidebar, panelRef, panelElementRef, setIsOpen } = useSidebar();
+  const { sidebarIconHidden, toggleSidebar, panelRef, panelElementRef } = useSidebar();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -66,15 +65,10 @@ function RootLayoutInner() {
           panelRef={panelRef}
           elementRef={panelElementRef}
           defaultSize="240px"
-          minSize="180px"
+          minSize="210px"
           maxSize="360px"
           collapsible
           collapsedSize={0}
-          onResize={(size) => {
-            const collapsed = size.inPixels === 0;
-            if (collapsed && isOpen) setIsOpen(false);
-            if (!collapsed && !isOpen) setIsOpen(true);
-          }}
         >
           <Sidebar>
             <SidebarHeader>
@@ -83,7 +77,10 @@ function RootLayoutInner() {
                   type="button"
                   aria-label="Toggle Sidebar"
                   onClick={toggleSidebar}
-                  className="no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-colors hover:bg-sidebar-hover"
+                  className={cn(
+                    "no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-all duration-100 hover:bg-sidebar-hover",
+                    sidebarIconHidden && "opacity-0",
+                  )}
                 >
                   <SidebarSimple size={16} />
                 </button>
@@ -129,7 +126,6 @@ function RootLayoutInner() {
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
-      {isDev && <TanStackRouterDevtools />}
     </div>
   );
 }

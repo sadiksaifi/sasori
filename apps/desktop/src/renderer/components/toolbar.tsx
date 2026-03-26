@@ -15,7 +15,7 @@ export function Toolbar() {
           type="button"
           aria-label="Toggle Sidebar"
           onClick={toggleSidebar}
-          className="no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-colors hover:bg-sidebar-hover"
+          className="no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label animate-in fade-in duration-100 transition-colors hover:bg-sidebar-hover"
         >
           <Sidebar size={16} />
         </button>

@@ -1,10 +1,16 @@
-import { render, screen, cleanup } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { afterEach, describe, it, expect } from "vitest";
+import { render, screen, cleanup, act, fireEvent } from "@testing-library/react";
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import { Toolbar } from "./toolbar";
 import { SidebarProvider } from "./sidebar/sidebar-context";
 
-afterEach(cleanup);
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+  cleanup();
+});
 
 function renderToolbar({ defaultOpen = true }: { defaultOpen?: boolean } = {}) {
   return render(
@@ -46,15 +52,20 @@ describe("Toolbar", () => {
     expect(toggleBtn.className).toContain("no-drag");
   });
 
-  it("clicking toggle button opens sidebar and removes padding", async () => {
-    const user = userEvent.setup();
+  it("clicking toggle button opens sidebar and removes padding", () => {
     renderToolbar({ defaultOpen: false });
 
     const toggleBtn = screen.getByRole("button", { name: /toggle sidebar/i });
-    await user.click(toggleBtn);
+    fireEvent.click(toggleBtn);
 
+    // isOpen becomes true immediately on open
     const toolbar = screen.getByRole("banner");
     expect(toolbar.className).not.toContain("pl-[78px]");
     expect(screen.queryByRole("button", { name: /toggle sidebar/i })).not.toBeInTheDocument();
+
+    // Finish animation
+    act(() => {
+      vi.advanceTimersByTime(350);
+    });
   });
 });
