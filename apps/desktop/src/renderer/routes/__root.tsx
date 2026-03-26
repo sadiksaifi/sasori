@@ -1,11 +1,11 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import {
-  House,
-  MagnifyingGlass,
-  Sparkle,
-  FolderSimple,
-  GearSix,
-  SidebarSimple,
+  HouseIcon,
+  MagnifyingGlassIcon,
+  SparkleIcon,
+  FolderSimpleIcon,
+  GearSixIcon,
+  SidebarSimpleIcon,
 } from "@phosphor-icons/react";
 import {
   SidebarProvider,
@@ -29,9 +29,9 @@ export const Route = createRootRoute({
 });
 
 const topNavItems: NavItem[] = [
-  { to: "/", label: "Home", icon: House },
-  { to: "/search", label: "Search", icon: MagnifyingGlass },
-  { to: "/skills", label: "Skills", icon: Sparkle },
+  { to: "/", label: "Home", icon: HouseIcon },
+  { to: "/search", label: "Search", icon: MagnifyingGlassIcon },
+  { to: "/skills", label: "Skills", icon: SparkleIcon },
 ];
 
 const threadItems = Array.from({ length: 18 }, (_, i) => ({
@@ -84,7 +84,7 @@ function RootLayoutInner() {
                     sidebarIconHidden ? "invisible" : "",
                   )}
                 >
-                  <SidebarSimple size={16} />
+                  <SidebarSimpleIcon size={16} />
                 </button>
               </div>
               <nav className="flex flex-col gap-related px-sidebar-section-x pb-2">
@@ -105,7 +105,7 @@ function RootLayoutInner() {
                     key={thread.id}
                     className="flex h-sidebar-item items-center gap-item rounded-sm px-sidebar-item-x text-body text-secondary-label transition-colors duration-75 hover:bg-sidebar-hover"
                   >
-                    <FolderSimple size={16} />
+                    <FolderSimpleIcon size={16} />
                     {thread.label}
                   </div>
                 ))}
@@ -113,7 +113,7 @@ function RootLayoutInner() {
             </SidebarContent>
             <SidebarFooter>
               <div className="border-t border-separator px-sidebar-section-x py-2">
-                <SidebarLink item={{ to: "/settings", label: "Settings", icon: GearSix }} />
+                <SidebarLink item={{ to: "/settings", label: "Settings", icon: GearSixIcon }} />
               </div>
             </SidebarFooter>
           </Sidebar>
@@ -141,7 +141,7 @@ function RootLayoutInner() {
               : "none",
           }}
         >
-          <SidebarSimple size={16} />
+          <SidebarSimpleIcon size={16} />
         </div>
       )}
     </div>

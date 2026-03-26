@@ -1,0 +1,79 @@
+{
+  "plugins": ["typescript", "unicorn", "import", "promise", "react", "jsx-a11y"],
+  "rules": {
+    // ── TypeScript ──────────────────────────────────────────────
+    "typescript/no-explicit-any": "warn",
+    "typescript/consistent-type-imports": "warn",
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/no-empty-object-type": "warn",
+    "typescript/consistent-type-definitions": "warn",
+    "typescript/array-type": "warn",
+    "typescript/no-deprecated": "error",
+
+    // ── Unused & dead code ──────────────────────────────────────
+    "no-unused-vars": "error",
+    "no-unused-expressions": "error",
+    "no-unused-labels": "error",
+    "no-unused-private-class-members": "error",
+
+    // ── Import hygiene ──────────────────────────────────────────
+    "import/no-duplicates": "warn",
+    "import/no-self-import": "error",
+    "import/no-cycle": "warn",
+    "import/default": "warn",
+    "import/namespace": "warn",
+
+    // ── Unicorn best practices ──────────────────────────────────
+    "unicorn/no-nested-ternary": "warn",
+    "unicorn/prefer-optional-catch-binding": "warn",
+    "unicorn/throw-new-error": "warn",
+    "unicorn/catch-error-name": "warn",
+    "unicorn/no-zero-fractions": "warn",
+    "unicorn/number-literal-case": "warn",
+
+    // ── Promise safety ──────────────────────────────────────────
+    "promise/no-new-statics": "error",
+    "promise/valid-params": "error",
+
+    // ── General ─────────────────────────────────────────────────
+    "no-var": "error",
+    "prefer-const": "warn",
+    "no-console": "off",
+    "no-alert": "error",
+    "eqeqeq": "warn",
+    "no-await-in-loop": "warn",
+
+    // ── React correctness ───────────────────────────────────────
+    "react/exhaustive-deps": "warn",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
+    "react/no-children-prop": "warn",
+    "react/no-danger-with-children": "error",
+    "react/no-direct-mutation-state": "error",
+    "react/void-dom-elements-no-children": "error",
+    "react/forward-ref-uses-ref": "warn",
+    "react/no-unknown-property": "warn",
+    "react/no-unsafe": "error",
+
+    // ── React style & perf ──────────────────────────────────────
+    "react/self-closing-comp": "warn",
+    "react/jsx-no-constructed-context-values": "warn",
+    "react/no-array-index-key": "warn",
+    "react/jsx-curly-brace-presence": "warn",
+    "react/jsx-boolean-value": "warn",
+    "react/button-has-type": "warn",
+
+    // ── Accessibility ───────────────────────────────────────────
+    "jsx-a11y/alt-text": "warn",
+    "jsx-a11y/anchor-has-content": "warn",
+    "jsx-a11y/anchor-is-valid": "warn",
+    "jsx-a11y/aria-props": "warn",
+    "jsx-a11y/aria-role": "warn",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/heading-has-content": "warn",
+    "jsx-a11y/no-aria-hidden-on-focusable": "warn",
+    "jsx-a11y/no-redundant-roles": "warn",
+    "jsx-a11y/tabindex-no-positive": "warn"
+  }
+}

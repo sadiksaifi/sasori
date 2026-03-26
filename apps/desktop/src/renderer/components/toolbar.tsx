@@ -1,4 +1,4 @@
-import { Sidebar as SidebarIcon, PaperPlaneTilt, ArrowSquareOut } from "@phosphor-icons/react";
+import { SidebarIcon, PaperPlaneTiltIcon, ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useSidebar, TRAFFIC_LIGHT_ZONE } from "./sidebar/sidebar-context";
 
@@ -35,14 +35,14 @@ export function Toolbar() {
           type="button"
           className="no-drag flex h-control items-center gap-related rounded-sm px-2 text-callout text-secondary-label transition-colors hover:bg-sidebar-hover"
         >
-          <PaperPlaneTilt size={14} />
+          <PaperPlaneTiltIcon size={14} />
           Push
         </button>
         <button
           type="button"
           className="no-drag flex h-control items-center gap-related rounded-sm px-2 text-callout text-secondary-label transition-colors hover:bg-sidebar-hover"
         >
-          <ArrowSquareOut size={14} />
+          <ArrowSquareOutIcon size={14} />
           Open
         </button>
       </div>
