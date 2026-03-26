@@ -28,7 +28,6 @@ interface SidebarContextValue {
   panelElementRef: React.RefObject<HTMLDivElement | null>;
   sidebarToggleRef: React.RefObject<HTMLButtonElement | null>;
   toolbarToggleRef: React.RefObject<HTMLButtonElement | null>;
-  setIsOpen: (open: boolean) => void;
 }
 
 const SidebarContext = createContext<SidebarContextValue | null>(null);
@@ -148,9 +147,8 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
       panelElementRef,
       sidebarToggleRef,
       toolbarToggleRef,
-      setIsOpen,
     }),
-    [isOpen, toolbarInset, sidebarIconHidden, transitionIcon, toggleSidebar, setIsOpen],
+    [isOpen, toolbarInset, sidebarIconHidden, transitionIcon, toggleSidebar],
   );
 
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
