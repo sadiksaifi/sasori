@@ -78,7 +78,7 @@ function RootLayoutInner() {
                   onClick={toggleSidebar}
                   className={cn(
                     "no-drag flex h-sidebar-item w-sidebar-item items-center justify-center rounded-sm text-secondary-label transition-all duration-100 hover:bg-sidebar-hover",
-                    sidebarIconHidden && "opacity-0",
+                    sidebarIconHidden && "-translate-x-1 opacity-0",
                   )}
                 >
                   <SidebarSimple size={16} />
