@@ -1,10 +1,12 @@
 import { useProjectStore } from "@/stores/project-store";
+import { useProfileStore } from "@/stores/profile-store";
 import { ProjectItem } from "./project-item";
 
 export function ProjectTree() {
   const projects = useProjectStore((s) => s.projects);
   const sessions = useProjectStore((s) => s.sessions);
   const expandedProjectIds = useProjectStore((s) => s.expandedProjectIds);
+  const lastActiveProjectId = useProfileStore((s) => s.lastActiveProjectId);
 
   if (projects.length === 0) {
     return (
@@ -22,6 +24,7 @@ export function ProjectTree() {
           project={project}
           sessions={sessions.filter((s) => s.projectId === project.id)}
           isExpanded={expandedProjectIds.includes(project.id)}
+          isActive={project.id === lastActiveProjectId}
         />
       ))}
     </div>
