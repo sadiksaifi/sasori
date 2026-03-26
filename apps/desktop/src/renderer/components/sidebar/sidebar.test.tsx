@@ -1,12 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarFixedItem,
-  SidebarContent,
-  SidebarFooter,
-} from "./sidebar";
+import { Sidebar, SidebarHeader, SidebarFixedItem, SidebarContent, SidebarFooter } from "./sidebar";
 
 describe("Sidebar", () => {
   it("renders all four sections as children", () => {

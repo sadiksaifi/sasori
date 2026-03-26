@@ -60,6 +60,12 @@ export function createApplicationMenu(mainWindow: BrowserWindow): void {
     {
       label: "View",
       submenu: [
+        {
+          label: "Toggle Sidebar",
+          accelerator: "CmdOrCtrl+B",
+          click: () => mainWindow.webContents.send("toggle-sidebar"),
+        },
+        { type: "separator" },
         { role: "reload" },
         { role: "forceReload" },
         { role: "toggleDevTools" },

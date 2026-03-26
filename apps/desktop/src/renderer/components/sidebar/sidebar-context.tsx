@@ -1,17 +1,10 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-import type { ImperativePanelHandle } from "react-resizable-panels";
+import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import type { PanelImperativeHandle } from "react-resizable-panels";
 
 interface SidebarContextValue {
   isOpen: boolean;
   toggleSidebar: () => void;
-  panelRef: React.RefObject<ImperativePanelHandle | null>;
+  panelRef: React.RefObject<PanelImperativeHandle | null>;
   setIsOpen: (open: boolean) => void;
 }
 
@@ -24,7 +17,7 @@ interface SidebarProviderProps {
 
 export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const panelRef = useRef<ImperativePanelHandle | null>(null);
+  const panelRef = useRef<PanelImperativeHandle | null>(null);
 
   const toggleSidebar = useCallback(() => {
     const panel = panelRef.current;

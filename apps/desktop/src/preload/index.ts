@@ -43,6 +43,9 @@ const electron = {
   onNavigate: (callback: (path: string) => void) => {
     ipcRenderer.on("navigate", (_event, path: string) => callback(path));
   },
+  onToggleSidebar: (callback: () => void) => {
+    ipcRenderer.on("toggle-sidebar", () => callback());
+  },
 };
 
 if (process.contextIsolated) {

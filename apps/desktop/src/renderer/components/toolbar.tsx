@@ -8,10 +8,7 @@ export function Toolbar() {
   return (
     <header
       role="banner"
-      className={cn(
-        "flex h-toolbar shrink-0 items-center drag-region",
-        !isOpen && "pl-[78px]",
-      )}
+      className={cn("flex h-toolbar shrink-0 items-center drag-region", !isOpen && "pl-[78px]")}
     >
       {!isOpen && (
         <button
