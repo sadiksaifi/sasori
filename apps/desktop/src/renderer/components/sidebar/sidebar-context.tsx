@@ -1,12 +1,23 @@
 import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
 import type { PanelImperativeHandle } from "react-resizable-panels";
 
+interface TransitionIconState {
+  x: number;
+  y: number;
+  targetX: number;
+  targetY: number;
+  animating: boolean;
+}
+
 interface SidebarContextValue {
   isOpen: boolean;
   sidebarIconHidden: boolean;
+  transitionIcon: TransitionIconState | null;
   toggleSidebar: () => void;
   panelRef: React.RefObject<PanelImperativeHandle | null>;
   panelElementRef: React.RefObject<HTMLDivElement | null>;
+  sidebarToggleRef: React.RefObject<HTMLButtonElement | null>;
+  toolbarToggleRef: React.RefObject<HTMLButtonElement | null>;
   setIsOpen: (open: boolean) => void;
 }
 
@@ -17,14 +28,16 @@ interface SidebarProviderProps {
   defaultOpen?: boolean;
 }
 
-const ICON_FADE_MS = 75;
 const PANEL_SLIDE_MS = 200;
 
 export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [sidebarIconHidden, setSidebarIconHidden] = useState(false);
+  const [transitionIcon, setTransitionIcon] = useState<TransitionIconState | null>(null);
   const panelRef = useRef<PanelImperativeHandle | null>(null);
   const panelElementRef = useRef<HTMLDivElement | null>(null);
+  const sidebarToggleRef = useRef<HTMLButtonElement | null>(null);
+  const toolbarToggleRef = useRef<HTMLButtonElement | null>(null);
   const animatingRef = useRef(false);
   const isOpenRef = useRef(isOpen);
   isOpenRef.current = isOpen;
@@ -38,25 +51,64 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
     const open = isOpenRef.current;
 
     if (open) {
-      // CLOSING: icon fades out in place → panel slides → toolbar icon fades in
+      // CLOSING: hide real icon, show floating clone, collapse panel simultaneously
       setSidebarIconHidden(true);
+
+      const sourceRect = sidebarToggleRef.current?.getBoundingClientRect();
+      if (sourceRect) {
+        setTransitionIcon({
+          x: sourceRect.left,
+          y: sourceRect.top,
+          targetX: 78,
+          targetY: sourceRect.top,
+          animating: false,
+        });
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setTransitionIcon((prev) => (prev ? { ...prev, animating: true } : null));
+          });
+        });
+      }
+
+      if (el) el.style.transition = `flex ${PANEL_SLIDE_MS}ms ease-in-out`;
+      if (panel) panel.collapse();
+
       setTimeout(() => {
-        if (el) el.style.transition = `flex ${PANEL_SLIDE_MS}ms ease-in-out`;
-        if (panel) panel.collapse();
-        setTimeout(() => {
-          if (el) el.style.transition = "";
-          setIsOpen(false);
-          animatingRef.current = false;
-        }, PANEL_SLIDE_MS + 50);
-      }, ICON_FADE_MS);
+        if (el) el.style.transition = "";
+        setTransitionIcon(null);
+        setIsOpen(false);
+        animatingRef.current = false;
+      }, PANEL_SLIDE_MS + 50);
     } else {
-      // OPENING: toolbar icon removed → panel slides → sidebar icon fades in
+      // OPENING: hide toolbar icon, show floating clone, expand panel simultaneously
       setSidebarIconHidden(true);
+
+      const sourceRect = toolbarToggleRef.current?.getBoundingClientRect();
+      if (sourceRect) {
+        setTransitionIcon({
+          x: sourceRect.left,
+          y: sourceRect.top,
+          targetX: 244, // estimated, refined below
+          targetY: sourceRect.top,
+          animating: false,
+        });
+      }
+
       setIsOpen(true);
       if (el) el.style.transition = `flex ${PANEL_SLIDE_MS}ms ease-in-out`;
       if (panel) panel.expand();
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const panelRect = el?.getBoundingClientRect();
+          const targetX = panelRect ? panelRect.right - 8 - 28 : 244;
+          setTransitionIcon((prev) => (prev ? { ...prev, targetX, animating: true } : null));
+        });
+      });
+
       setTimeout(() => {
         if (el) el.style.transition = "";
+        setTransitionIcon(null);
         setSidebarIconHidden(false);
         animatingRef.current = false;
       }, PANEL_SLIDE_MS + 50);
@@ -65,7 +117,17 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
 
   return (
     <SidebarContext.Provider
-      value={{ isOpen, sidebarIconHidden, toggleSidebar, panelRef, panelElementRef, setIsOpen }}
+      value={{
+        isOpen,
+        sidebarIconHidden,
+        transitionIcon,
+        toggleSidebar,
+        panelRef,
+        panelElementRef,
+        sidebarToggleRef,
+        toolbarToggleRef,
+        setIsOpen,
+      }}
     >
       {children}
     </SidebarContext.Provider>

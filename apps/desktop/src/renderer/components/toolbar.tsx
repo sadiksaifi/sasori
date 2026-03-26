@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useSidebar } from "./sidebar/sidebar-context";
 
 export function Toolbar() {
-  const { isOpen, toggleSidebar } = useSidebar();
+  const { isOpen, toggleSidebar, toolbarToggleRef } = useSidebar();
 
   return (
     <header
@@ -12,6 +12,7 @@ export function Toolbar() {
     >
       {!isOpen && (
         <button
+          ref={toolbarToggleRef}
           type="button"
           aria-label="Toggle Sidebar"
           onClick={toggleSidebar}

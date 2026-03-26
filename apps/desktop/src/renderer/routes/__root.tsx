@@ -54,7 +54,14 @@ function RootLayout() {
 
 function RootLayoutInner() {
   useElectronEvents();
-  const { sidebarIconHidden, toggleSidebar, panelRef, panelElementRef } = useSidebar();
+  const {
+    sidebarIconHidden,
+    transitionIcon,
+    toggleSidebar,
+    panelRef,
+    panelElementRef,
+    sidebarToggleRef,
+  } = useSidebar();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -73,6 +80,7 @@ function RootLayoutInner() {
             <SidebarHeader>
               <div className="flex h-toolbar items-center justify-end px-2 drag-region">
                 <button
+                  ref={sidebarToggleRef}
                   type="button"
                   aria-label="Toggle Sidebar"
                   onClick={toggleSidebar}
@@ -125,6 +133,22 @@ function RootLayoutInner() {
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
+
+      {/* Floating icon that animates between sidebar and toolbar positions */}
+      {transitionIcon && (
+        <div
+          className="pointer-events-none fixed z-50 flex h-sidebar-item w-sidebar-item items-center justify-center text-secondary-label"
+          style={{
+            left: transitionIcon.animating ? transitionIcon.targetX : transitionIcon.x,
+            top: transitionIcon.animating ? transitionIcon.targetY : transitionIcon.y,
+            transition: transitionIcon.animating
+              ? `left ${200}ms ease-in-out, top ${200}ms ease-in-out`
+              : "none",
+          }}
+        >
+          <SidebarSimple size={16} />
+        </div>
+      )}
     </div>
   );
 }

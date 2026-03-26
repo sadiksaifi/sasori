@@ -19,7 +19,7 @@ describe("SidebarProvider", () => {
     expect(result.current.isOpen).toBe(true);
   });
 
-  it("toggleSidebar fades icon then collapses panel", () => {
+  it("toggleSidebar hides icon and collapses panel", () => {
     const { result } = renderHook(() => useSidebar(), {
       wrapper: SidebarProvider,
     });
@@ -28,13 +28,13 @@ describe("SidebarProvider", () => {
       result.current.toggleSidebar();
     });
 
-    // Icon fades first, panel hasn't collapsed yet
+    // Icon hidden immediately, isOpen still true during animation
     expect(result.current.sidebarIconHidden).toBe(true);
     expect(result.current.isOpen).toBe(true);
 
-    // After full animation
+    // After animation completes
     act(() => {
-      vi.advanceTimersByTime(400);
+      vi.advanceTimersByTime(300);
     });
 
     expect(result.current.isOpen).toBe(false);
@@ -50,7 +50,7 @@ describe("SidebarProvider", () => {
       result.current.toggleSidebar();
     });
     act(() => {
-      vi.advanceTimersByTime(400);
+      vi.advanceTimersByTime(300);
     });
     expect(result.current.isOpen).toBe(false);
 
@@ -62,7 +62,7 @@ describe("SidebarProvider", () => {
     expect(result.current.sidebarIconHidden).toBe(true);
 
     act(() => {
-      vi.advanceTimersByTime(400);
+      vi.advanceTimersByTime(300);
     });
     expect(result.current.sidebarIconHidden).toBe(false);
   });
