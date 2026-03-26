@@ -22,7 +22,6 @@
     "clean": "rimraf out"
   },
   "dependencies": {
-    "@base-ui-components/react": "^1.0.0-rc.0",
     "@phosphor-icons/react": "catalog:",
     "@repo/shared": "workspace:*",
     "@tanstack/react-router": "^1.168.4",
