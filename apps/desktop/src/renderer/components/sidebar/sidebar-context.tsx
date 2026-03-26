@@ -82,6 +82,8 @@ export function SidebarProvider({ children, defaultOpen = true }: SidebarProvide
           targetY: sourceRect.top,
           animating: false,
         });
+        // Two nested rAFs ensure the browser has painted the initial position
+        // before we trigger the CSS transition to the target position.
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setTransitionIcon((prev) => (prev ? { ...prev, animating: true } : null));
