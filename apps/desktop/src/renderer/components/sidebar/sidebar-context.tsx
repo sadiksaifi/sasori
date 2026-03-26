@@ -17,8 +17,13 @@ interface SidebarContextValue {
 
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
-export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(true);
+interface SidebarProviderProps {
+  children: ReactNode;
+  defaultOpen?: boolean;
+}
+
+export function SidebarProvider({ children, defaultOpen = true }: SidebarProviderProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const panelRef = useRef<ImperativePanelHandle | null>(null);
 
   const toggleSidebar = useCallback(() => {
