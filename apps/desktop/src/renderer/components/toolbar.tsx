@@ -9,7 +9,7 @@ export function Toolbar() {
     <header
       role="banner"
       className={cn(
-        "flex h-toolbar shrink-0 items-center justify-between drag-region",
+        "flex h-toolbar shrink-0 items-center justify-between px-3 drag-region transition-[padding-left] duration-200 ease-in-out",
         !isOpen && "pl-[78px]",
       )}
     >
